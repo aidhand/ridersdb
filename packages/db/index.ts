@@ -5,5 +5,3 @@ import * as schema from "./schema";
 const sql = neon(process.env.DATABASE_URL!);
 export const orm = drizzle(sql, { schema });
 export * from "./schema";
-
-console.log("Hello via Bun!");
