@@ -1,0 +1,12 @@
+{
+  "name": "@repo/types",
+  "type": "module",
+  "module": "index.ts",
+  "private": true,
+  "dependencies": {
+    "drizzle-orm": "^0.43.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

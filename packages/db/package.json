@@ -3,13 +3,20 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
-  "devDependencies": {
-    "drizzle-kit": "^0.31.1"
+  "scripts": {
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "dev": "bun run db:studio"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.0",
     "drizzle-orm": "^0.43.1",
     "postgres": "^3.4.5"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.1"
   },
   "peerDependencies": {
     "typescript": "^5"
