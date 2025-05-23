@@ -1,8 +1,17 @@
-import { z } from "zod";
+import type { InferOutput } from "valibot";
+import * as v from "valibot";
+import {
+  identifierSchema,
+  nameField,
+  slugField,
+  urlValidator,
+} from "./sharedFields";
 
-export const newRetailerSchema = z.object({
-  slug: z.string(),
-  name: z.string(),
-  url: z.string().url(),
+export type RetailerIdentifier = InferOutput<typeof identifierSchema>;
+
+export const newRetailerSchema = v.object({
+  ...slugField, // Use shared slug validator
+  ...nameField,
+  url: urlValidator,
 });
-export type NewRetailerInput = z.infer<typeof newRetailerSchema>;
+export type NewRetailer = InferOutput<typeof newRetailerSchema>;

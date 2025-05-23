@@ -1,8 +1,23 @@
-import { z } from "zod";
+import type { InferOutput } from "valibot";
+import * as v from "valibot";
+import {
+  descriptionField,
+  identifierSchema,
+  nameField,
+  slugField,
+} from "./sharedFields";
 
-export const newBrandSchema = z.object({
-  slug: z.string(),
-  name: z.string(),
-  description: z.string().optional(),
+export type BrandIdentifier = InferOutput<typeof identifierSchema>;
+
+export const newBrandSchema = v.object({
+  ...slugField,
+  ...nameField,
+  ...descriptionField,
 });
-export type NewBrandInput = z.infer<typeof newBrandSchema>;
+export type NewBrand = InferOutput<typeof newBrandSchema>;
+
+export const updateBrandSchema = v.object({
+  ...nameField,
+  ...descriptionField,
+});
+export type UpdateBrand = InferOutput<typeof updateBrandSchema>;

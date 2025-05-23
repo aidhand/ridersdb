@@ -1,11 +1,14 @@
-import { z } from "zod";
+import type { InferOutput } from "valibot";
+import * as v from "valibot";
+import { identifierSchema, uuidRefValidator } from "./sharedFields";
 
-export const newVariantSchema = z.object({
-  product: z.string().uuid(),
-  sku: z.string(),
-  size: z.string().optional(),
-  color: z.string().optional(),
-  material: z.string().optional(),
-  metadata: z.any().optional(),
+export type VariantIdentifier = InferOutput<typeof identifierSchema>;
+
+export const newVariantSchema = v.object({
+  product: uuidRefValidator, // Using shared UUID validator
+  size: v.optional(v.string()),
+  color: v.optional(v.string()),
+  material: v.optional(v.string()),
+  metadata: v.optional(v.any()),
 });
-export type NewVariantInput = z.infer<typeof newVariantSchema>;
+export type NewVariant = InferOutput<typeof newVariantSchema>;

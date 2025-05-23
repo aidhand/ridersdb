@@ -7,10 +7,20 @@ export default defineNuxtConfig({
 
   future: {
     compatibilityVersion: 4,
+    typescriptBundlerResolution: true,
   },
 
   experimental: {
+    asyncContext: true,
+    asyncEntry: true,
+    clientFallback: true,
+    clientNodeCompat: true,
+    componentIslands: true,
     renderJsonPayloads: true,
+    lazyHydration: true,
+    sharedPrerenderData: true,
+    typedPages: true,
+    writeEarlyHints: true,
   },
 
   imports: {
@@ -31,6 +41,9 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@pinia/colada-nuxt",
   ],
+  typescript: {
+    typeCheck: true,
+  },
 
   css: ["~/assets/css/main.css"],
 });

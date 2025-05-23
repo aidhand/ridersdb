@@ -1,10 +1,28 @@
-import { z } from "zod";
+import type { InferOutput } from "valibot";
+import * as v from "valibot";
+import {
+  descriptionField,
+  identifierSchema,
+  nameField,
+  slugField,
+  uuidRefValidator,
+} from "./sharedFields";
 
-export const newProductSchema = z.object({
-  slug: z.string(),
-  name: z.string(),
-  description: z.string().optional(),
-  brand: z.string().uuid(),
-  collection: z.string().uuid(),
+export type ProductIdentifier = InferOutput<typeof identifierSchema>;
+
+export const newProductSchema = v.object({
+  ...slugField,
+  ...nameField,
+  ...descriptionField,
+  brand: uuidRefValidator,
+  collection: uuidRefValidator,
 });
-export type NewProductInput = z.infer<typeof newProductSchema>;
+export type NewProduct = InferOutput<typeof newProductSchema>;
+
+export const updateProductSchema = v.object({
+  ...nameField,
+  ...descriptionField,
+  brand: v.optional(uuidRefValidator),
+  collection: v.optional(uuidRefValidator),
+});
+export type UpdateProduct = InferOutput<typeof updateProductSchema>;
