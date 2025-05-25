@@ -5,20 +5,19 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "format": "prettier --write .",
+    "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
-    "turbo": "^2.5.3",
-    "typescript": "5.8.2"
+    "turbo": "^2.5.3"
   },
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "bun@1.2.13",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "packageManager": "bun@1.2.13"
 }

@@ -1,11 +1,8 @@
 {
   "extends": "@repo/config/tsconfig.base.json",
-  "exclude": ["migrations"],
-
   "compilerOptions": {
     "paths": {
-      "~": ["./src"],
-      "~/schema": ["./schema"]
+      "~": ["./src"]
     }
   }
 }

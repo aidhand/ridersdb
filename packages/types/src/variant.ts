@@ -1,4 +1,4 @@
-import { variants } from "@repo/db";
+import { variants } from "@repo/db/schema";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export type Variant = InferSelectModel<typeof variants>;

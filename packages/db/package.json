@@ -1,14 +1,15 @@
 {
   "name": "@repo/db",
-  "module": "index.ts",
   "type": "module",
+  "module": "./src/index.ts",
   "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./schema/index.ts"
+  },
   "scripts": {
-    "db:push": "drizzle-kit push",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio",
-    "dev": "bun run db:studio"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.0",
@@ -16,7 +17,11 @@
     "postgres": "^3.4.5"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.1"
+    "drizzle-kit": "^0.31.1",
+    "eslint": "^9.27.0",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "@repo/config": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "^5"

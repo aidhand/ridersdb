@@ -1,127 +1,170 @@
 import { os } from "@orpc/server";
-import { collections, orm } from "@repo/db";
-import { newCollectionSchema } from "@repo/validation";
+import { collections } from "@repo/db/schema";
+import type { CollectionIdentifier } from "@repo/validation";
+import {
+  collectionIdentifierSchema,
+  listCollectionsSchema,
+  newCollectionSchema,
+  updateCollectionSchema,
+} from "@repo/validation";
+import { identifierSchema } from "@repo/validation/shared";
+import type { SQL } from "drizzle-orm";
 import { and, asc, desc, eq, ilike } from "drizzle-orm";
-import { z } from "zod";
+import * as v from "valibot";
+import { constants } from "../constants";
+import { db } from "./db";
+
+/**
+ * Creates where clauses for database queries based on identifier
+ * @param identifier - The identifier object containing either id or slug
+ * @param fields - The database fields to compare against
+ * @returns A SQL condition that can be used in a query's where clause
+ */
+function createCollectionWhereClauses(
+  identifier: CollectionIdentifier,
+  fields: { id: typeof collections.id; slug: typeof collections.slug }
+): SQL {
+  if ("id" in identifier) {
+    return eq(fields.id, identifier.id);
+  }
+
+  if ("slug" in identifier) {
+    return eq(fields.slug, identifier.slug);
+  }
+
+  throw new Error("Invalid identifier");
+}
+
+/**
+ * Creates a combined where clause from multiple conditions
+ * @param conditions - Array of SQL conditions
+ * @returns A combined SQL condition using AND
+ */
+function createCombinedWhereClause(conditions: SQL[]): SQL | undefined {
+  return conditions.length > 0 ? and(...conditions) : undefined;
+}
 
 // List all collections with sorting, pagination, and filtering
 export const listCollections = os
-  .input(
-    z.object({
-      limit: z.number().int().min(1).max(100).optional(),
-      offset: z.number().int().min(0).optional(),
-      sortBy: z.enum(["name", "createdAt", "updatedAt"]).optional(),
-      sortOrder: z.enum(["asc", "desc"]).optional(),
-      filter: z
-        .object({
-          name: z.string().optional(),
-        })
-        .optional(),
-    })
-  )
+  .input(listCollectionsSchema)
   .handler(async (opts) => {
-    const whereClauses = [];
-    const { filter } = opts.input;
-    if (filter && filter.name) {
-      whereClauses.push(ilike(collections.name, `%${filter.name}%`));
+    try {
+      const whereClauses = [];
+      const { filter } = opts.input;
+      if (filter && filter.name) {
+        whereClauses.push(ilike(collections.name, `%${filter.name}%`));
+      }
+      const where = createCombinedWhereClause(whereClauses);
+
+      const orderBy = [];
+      if (opts.input.sortBy) {
+        const orderFn = opts.input.sortOrder === "desc" ? desc : asc;
+        if (opts.input.sortBy === "name")
+          orderBy.push(orderFn(collections.name));
+        else if (opts.input.sortBy === "createdAt")
+          orderBy.push(orderFn(collections.createdAt));
+        else if (opts.input.sortBy === "updatedAt")
+          orderBy.push(orderFn(collections.updatedAt));
+      }
+
+      const limit = opts.input.limit ?? constants.DEFAULT_LIMIT;
+      const offset = opts.input.offset ?? constants.DEFAULT_OFFSET;
+
+      const query = db
+        .select()
+        .from(collections)
+        .where(where)
+        .orderBy(...orderBy)
+        .limit(limit)
+        .offset(offset);
+
+      const allCollections = await query;
+      return allCollections;
+    } catch (error) {
+      console.error("Error in listCollections:", error);
+      throw new Error("Failed to list collections");
     }
-    const where = whereClauses.length > 0 ? and(...whereClauses) : undefined;
-
-    const orderBy = [];
-    if (opts.input.sortBy) {
-      const orderFn = opts.input.sortOrder === "desc" ? desc : asc;
-      if (opts.input.sortBy === "name") orderBy.push(orderFn(collections.name));
-      else if (opts.input.sortBy === "createdAt")
-        orderBy.push(orderFn(collections.createdAt));
-      else if (opts.input.sortBy === "updatedAt")
-        orderBy.push(orderFn(collections.updatedAt));
-    }
-
-    const limit = opts.input.limit ?? 40;
-    const offset = opts.input.offset ?? 0;
-
-    const query = orm
-      .select()
-      .from(collections)
-      .where(where)
-      .orderBy(...orderBy)
-      .limit(limit)
-      .offset(offset);
-
-    return await query;
   });
 
 // Get a collection by ID or slug
 export const getCollection = os
-  .input(
-    z.union([
-      z.object({ id: z.string().uuid() }),
-      z.object({ slug: z.string() }),
-    ])
-  )
+  .input(collectionIdentifierSchema)
   .handler(async (opts) => {
-    const identifier = opts.input;
-    let where;
-    if ("id" in identifier) where = eq(collections.id, identifier.id);
-    else if ("slug" in identifier)
-      where = eq(collections.slug, identifier.slug);
-    const [collection] = await orm.select().from(collections).where(where);
-    return collection ?? null;
+    try {
+      const whereClauses = createCollectionWhereClauses(opts.input, {
+        id: collections.id,
+        slug: collections.slug,
+      });
+
+      const [collection] = await db
+        .select()
+        .from(collections)
+        .where(whereClauses);
+      return collection ?? null;
+    } catch (error) {
+      console.error("Error in getCollection:", error);
+      throw new Error("Failed to get collection");
+    }
   });
 
 // Create a new collection
 export const createCollection = os
-  .input(z.object({ data: newCollectionSchema }))
+  .input(v.object({ data: newCollectionSchema }))
   .handler(async (opts) => {
-    const [created] = await orm
-      .insert(collections)
-      .values(opts.input.data)
-      .returning();
-    return created;
+    try {
+      const [created] = await db
+        .insert(collections)
+        .values({
+          ...opts.input.data,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
+      return created;
+    } catch (error) {
+      console.error("Error in createCollection:", error);
+      throw new Error("Failed to create collection");
+    }
   });
 
 // Update a collection by ID or slug
 export const updateCollection = os
   .input(
-    z
-      .union([
-        z.object({ id: z.string().uuid() }),
-        z.object({ slug: z.string() }),
-      ])
-      .and(
-        z.object({ data: newCollectionSchema.partial().omit({ slug: true }) })
-      )
+    v.intersect([identifierSchema, v.object({ data: updateCollectionSchema })])
   )
   .handler(async (opts) => {
-    const identifier = opts.input;
-    let where;
-    if ("id" in identifier) where = eq(collections.id, identifier.id);
-    else if ("slug" in identifier)
-      where = eq(collections.slug, identifier.slug);
-    const [updated] = await orm
-      .update(collections)
-      .set({ ...opts.input.data })
-      .where(where)
-      .returning();
-    return updated ?? null;
+    try {
+      const whereClauses = createCollectionWhereClauses(opts.input, {
+        id: collections.id,
+        slug: collections.slug,
+      });
+
+      const [updated] = await db
+        .update(collections)
+        .set({ ...opts.input.data, updatedAt: new Date() })
+        .where(whereClauses)
+        .returning();
+      return updated ?? null;
+    } catch (error) {
+      console.error("Error in updateCollection:", error);
+      throw new Error("Failed to update collection");
+    }
   });
 
 // Delete a collection by ID or slug
 export const deleteCollection = os
-  .input(
-    z.object({
-      identifier: z.union([
-        z.object({ id: z.string().uuid() }),
-        z.object({ slug: z.string() }),
-      ]),
-    })
-  )
+  .input(identifierSchema)
   .handler(async (opts) => {
-    const identifier = opts.input.identifier;
-    let where;
-    if ("id" in identifier) where = eq(collections.id, identifier.id);
-    else if ("slug" in identifier)
-      where = eq(collections.slug, identifier.slug);
-    const result = await orm.delete(collections).where(where);
-    return result.rowCount > 0;
+    try {
+      const whereClauses = createCollectionWhereClauses(opts.input, {
+        id: collections.id,
+        slug: collections.slug,
+      });
+
+      const result = await db.delete(collections).where(whereClauses);
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error("Error in deleteCollection:", error);
+      throw new Error("Failed to delete collection");
+    }
   });

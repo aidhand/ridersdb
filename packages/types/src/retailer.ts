@@ -1,4 +1,4 @@
-import { retailers } from "@repo/db";
+import { retailers } from "@repo/db/schema";
 import type { InferModel } from "drizzle-orm";
 
 export type Retailer = InferModel<typeof retailers>;

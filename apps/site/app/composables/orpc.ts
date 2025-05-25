@@ -3,15 +3,11 @@ import { RPCLink } from "@orpc/client/fetch";
 import type { RouterClient } from "@orpc/server";
 import type { router } from "~~/server/api/rpc";
 
-// TODO: move router definition to a shared location
-// TODO: implement pinia colada with orpc
-// TODO: implement openapi version for public api
+// Use environment variable for RPC URL
+const rpcUrl = process.env.RPC_URL || `http://localhost:3000/api/rpc`;
+const link = new RPCLink({ url: rpcUrl });
+const client: RouterClient<typeof router> = createORPCClient(link);
+
 export function useOrpc() {
-  const link = new RPCLink({
-    url: `http://localhost:3000/api/rpc`,
-  });
-
-  const client: RouterClient<typeof router> = createORPCClient(link);
-
   return client;
 }
