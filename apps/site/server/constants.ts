@@ -8,6 +8,6 @@ export const constants = {
   PRICE_PRECISION: 10,
   PRICE_SCALE: 2,
   EXPIRATION_DAYS: 14,
-  RPC_URL: process.env.RPC_URL || "http://localhost:3000/api/rpc",
+  RPC_URL: process.env.RPC_URL || "http://localhost:3001/api/rpc",
   NOT_FOUND_STATUS: 404,
 } as const;
