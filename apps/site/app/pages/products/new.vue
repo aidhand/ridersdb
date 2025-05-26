@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Brand, Collection } from "@repo/types";
+import type { Brand, Collection } from "@repo/validation/types";
 
 interface FormData {
   name: string;

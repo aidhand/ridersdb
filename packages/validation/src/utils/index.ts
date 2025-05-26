@@ -39,12 +39,6 @@ export const descriptionField = {
   ),
 };
 
-// UUID reference validator for foreign keys
-export const uuidRefValidator = v.pipe(
-  v.string(),
-  v.uuid("Must be a valid UUID reference")
-);
-
 // URL validator
 export const urlValidator = v.pipe(
   v.string(),
@@ -56,3 +50,30 @@ export const identifierSchema = v.union([
   v.object(idField),
   v.object(slugField),
 ]);
+
+// UUID reference validator for foreign keys
+export const uuidRefValidator = v.pipe(
+  v.string(),
+  v.uuid("Must be a valid UUID reference")
+);
+
+// Pagination schema
+export const paginationSchema = v.object({
+  limit: v.optional(v.number()),
+  offset: v.optional(v.number()),
+});
+
+// Sorting schema (generic, can be extended per-entity)
+export function sortingSchema(fields: string[]) {
+  return v.object({
+    sortBy: v.optional(v.union(fields.map((f) => v.literal(f)))),
+    sortOrder: v.optional(v.union([v.literal("asc"), v.literal("desc")])),
+  });
+}
+
+// Filtering schema (generic, accepts a filter object schema)
+export function filteringSchema(filterObject: v.ObjectEntries) {
+  return v.object({
+    filter: v.optional(v.object(filterObject)),
+  });
+}

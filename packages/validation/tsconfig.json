@@ -2,7 +2,10 @@
   "extends": "@repo/config/tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "~": ["./src"]
+      "~": ["./src"],
+      "~/*": ["./src/*"],
+      "~/types": ["./types"],
+      "~/types/*": ["./types/*"]
     }
   }
 }

@@ -20,10 +20,23 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: "bun",
+    experimental: {
+      openAPI: true,
+    },
   },
 
   runtimeConfig: {
     databaseUrl: "",
+
+    api: {
+      baseUrl: "/api",
+      pagination: {
+        defaultLimit: 20,
+        defaultOffset: 0,
+      },
+    },
+
+    public: {},
   },
 
   modules: [

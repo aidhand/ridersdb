@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import type { Brand, Collection, Product, Variant } from "@repo/types";
+import type {
+  Brand,
+  Collection,
+  Product,
+  Variant,
+} from "@repo/validation/types";
 
 // Define enhanced product type with brand and collection details
 interface EnhancedProduct extends Product {
@@ -331,7 +336,7 @@ useSeoMeta({
                   class="hover:bg-neutral-500/5 transition-colors"
                 >
                   <td class="px-4 py-3 text-sm font-medium text-neutral-500/90">
-                    {{ variant.sku }}
+                    sku
                   </td>
                   <td class="px-4 py-3 text-sm text-neutral-500/70">
                     <span
@@ -365,7 +370,7 @@ useSeoMeta({
                     >
                   </td>
                   <td class="px-4 py-3 text-sm text-neutral-500/70">
-                    {{ variant.material || "—" }}
+                    material
                   </td>
                 </tr>
               </tbody>
