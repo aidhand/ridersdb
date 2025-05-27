@@ -20,7 +20,9 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: "bun",
+
     experimental: {
+      tasks: true,
       openAPI: true,
     },
   },
