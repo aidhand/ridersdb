@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { useDark, useToggle } from "@vueuse/core";
+import { useDark } from "@vueuse/core";
 
 const isDark = useDark();
-const toggleDark = useToggle(isDark);
 </script>
 
 <template>
-  <UTooltip text="Switch theme"
-    ><UButton
-      color="neutral"
-      size="lg"
-      variant="outline"
-      class="p-2 cursor-pointer"
-      @click="toggleDark()"
-      ><UIcon
-        :name="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
-        class="m-[1px] text-lg" /></UButton
-  ></UTooltip>
+  <USwitch
+    v-model="isDark"
+    size="xl"
+    color="neutral"
+    checked-icon="i-heroicons-moon-solid"
+    unchecked-icon="i-heroicons-sun-solid"
+    class="text-sm"
+    :ui="{
+      base: 'data-[state=checked]:bg-neutral-400/20 data-[state=unchecked]:bg-neutral-400/20',
+    }"
+  />
 </template>

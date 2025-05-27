@@ -1,5 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
@@ -7,28 +5,38 @@ export default defineNuxtConfig({
 
   future: {
     compatibilityVersion: 4,
-    typescriptBundlerResolution: true,
   },
 
-  experimental: {
-    asyncContext: true,
-    asyncEntry: true,
-    clientFallback: true,
-    clientNodeCompat: true,
-    componentIslands: true,
-    renderJsonPayloads: true,
-    lazyHydration: true,
-    sharedPrerenderData: true,
-    typedPages: true,
-    writeEarlyHints: true,
+  // experimental: {
+  //   asyncContext: true,
+  //   asyncEntry: true,
+  //   clientFallback: true,
+  //   componentIslands: true,
+  //   renderJsonPayloads: true,
+  //   lazyHydration: true,
+  //   sharedPrerenderData: true,
+  //   typedPages: true,
+  // },
+
+  nitro: {
+    preset: "bun",
+    experimental: {
+      openAPI: true,
+    },
   },
 
-  imports: {
-    dirs: ["./app/stores", "./shared/types"],
-  },
+  runtimeConfig: {
+    databaseUrl: "",
 
-  vite: {
-    plugins: [tailwindcss()],
+    api: {
+      baseUrl: "/api",
+      pagination: {
+        defaultLimit: 20,
+        defaultOffset: 0,
+      },
+    },
+
+    public: {},
   },
 
   modules: [
@@ -36,14 +44,14 @@ export default defineNuxtConfig({
     "@nuxt/fonts",
     "@nuxt/icon",
     "@nuxt/image",
-    "@nuxt/test-utils",
+    "@nuxt/test-utils/module",
     "@nuxt/ui",
-    "@pinia/nuxt",
-    "@pinia/colada-nuxt",
   ],
-  typescript: {
-    typeCheck: true,
+  fonts: {
+    defaults: {
+      weights: ["100 900"],
+      subsets: ["latin", "latin-ext"],
+    },
   },
-
   css: ["~/assets/css/main.css"],
 });
