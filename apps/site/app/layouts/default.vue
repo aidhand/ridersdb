@@ -8,7 +8,7 @@
       class="flex-1 bg-neutral-400/4"
       aria-label="Main content"
     >
-      <BaseContainer class="py-8">
+      <BaseContainer>
         <slot />
       </BaseContainer>
     </main>
