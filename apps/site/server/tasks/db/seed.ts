@@ -8,7 +8,6 @@ import {
   retailers,
   variants,
 } from "@repo/db/schema";
-import { generateUniqueSlug } from "./helpers";
 
 const { databaseUrl } = useRuntimeConfig();
 const db = useNodePg(databaseUrl);
