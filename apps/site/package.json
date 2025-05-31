@@ -5,10 +5,17 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port 3000",
+<<<<<<< Updated upstream
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
+=======
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "typecheck": "vue-tsc --noEmit && tsc --noEmit"
+>>>>>>> Stashed changes
   },
   "dependencies": {
     "@nuxt/eslint": "1.4.0",
@@ -36,9 +43,14 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
+<<<<<<< Updated upstream
     "@tailwindcss/vite": "^4.1.7",
     "@types/bun": "latest",
+=======
+    "@vue/test-utils": "^2.4.6",
+>>>>>>> Stashed changes
     "playwright": "^1.52.0",
+    "prettier": "^3.3.3",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.8.3",
     "vitest": "^3.1.3",
