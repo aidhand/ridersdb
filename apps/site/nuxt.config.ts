@@ -43,7 +43,6 @@ export default defineNuxtConfig({
 
     public: {},
   },
-
   modules: [
     "@nuxt/eslint",
     "@nuxt/fonts",
@@ -51,6 +50,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxt/test-utils/module",
     "@nuxt/ui",
+    "@pinia/nuxt",
   ],
   fonts: {
     defaults: {

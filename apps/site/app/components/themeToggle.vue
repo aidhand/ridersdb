@@ -1,19 +1,52 @@
 <script setup lang="ts">
-import { useDark } from "@vueuse/core";
+import { useCycleList } from "@vueuse/core";
 
-const isDark = useDark();
+const colorMode = useColorMode();
+const { state, next } = useCycleList(["system", "dark", "light"] as const, {
+  initialValue: colorMode.preference,
+});
 </script>
 
 <template>
-  <USwitch
-    v-model="isDark"
-    size="xl"
+  <UButton
+    aria-label="Switch theme"
     color="neutral"
-    checked-icon="i-heroicons-moon-solid"
-    unchecked-icon="i-heroicons-sun-solid"
-    class="text-sm"
-    :ui="{
-      base: 'data-[state=checked]:bg-neutral-400/20 data-[state=unchecked]:bg-neutral-400/20',
-    }"
-  />
+    variant="outline"
+    size="sm"
+    @click="colorMode.preference = next()"
+  >
+    <span class="sr-only">Switch to {{ state }} mode</span>
+    <span
+      v-if="colorMode.preference === 'system'"
+      class="flex items-center gap-2"
+    >
+      <UIcon
+        name="i-tabler-sun-moon"
+        size="0.9rem"
+      />
+      System
+    </span>
+
+    <span
+      v-if="colorMode.preference === 'light'"
+      class="flex items-center gap-2"
+    >
+      <UIcon
+        name="i-tabler-sun"
+        size="0.9rem"
+      />
+      Light
+    </span>
+
+    <span
+      v-if="colorMode.preference === 'dark'"
+      class="flex items-center gap-2"
+    >
+      <UIcon
+        name="i-tabler-moon"
+        size="0.9rem"
+      />
+      Dark
+    </span>
+  </UButton>
 </template>
