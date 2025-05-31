@@ -11,6 +11,11 @@ useSeoMeta({
 
 <template>
   <PageWrapper>
+    <!-- Page Header Navigation -->
+    <PageHeaderNav
+      :breadcrumbs="[{ label: 'Products', icon: 'i-tabler-package' }]"
+    />
+
     <!-- Page Header -->
     <ProductPageHeader>
       <template #title>Products</template>

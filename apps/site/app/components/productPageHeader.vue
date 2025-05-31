@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <section class="border-b-2 border-neutral-400/20 py-12">
+  <section class="border-b-2 border-neutral-400/20 my-12 pb-12">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <!-- Title Section -->
       <div class="space-y-2">

@@ -12,19 +12,20 @@ const { state, next } = useCycleList(["system", "dark", "light"] as const, {
     aria-label="Switch theme"
     color="neutral"
     variant="outline"
-    size="sm"
+    size="md"
+    class="flex items-center gap-2"
     @click="colorMode.preference = next()"
   >
     <span class="sr-only">Switch to {{ state }} mode</span>
+
     <span
       v-if="colorMode.preference === 'system'"
       class="flex items-center gap-2"
     >
       <UIcon
         name="i-tabler-sun-moon"
-        size="0.9rem"
-      />
-      System
+        class="text-[1rem]"
+      />System
     </span>
 
     <span
@@ -33,7 +34,7 @@ const { state, next } = useCycleList(["system", "dark", "light"] as const, {
     >
       <UIcon
         name="i-tabler-sun"
-        size="0.9rem"
+        class="text-[1rem]"
       />
       Light
     </span>
@@ -44,7 +45,7 @@ const { state, next } = useCycleList(["system", "dark", "light"] as const, {
     >
       <UIcon
         name="i-tabler-moon"
-        size="0.9rem"
+        class="text-[1rem]"
       />
       Dark
     </span>

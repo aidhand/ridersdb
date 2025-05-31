@@ -31,19 +31,28 @@ const _searchQuery = useProductSearch();
     </div>
 
     <!-- Loading state -->
-
     <div
       v-else-if="products.pending.value"
-      class="flex items-center justify-center flex-wrap gap-4"
+      class="flex flex-wrap gap-8 space-y-8"
     >
-      <USkeleton class="flex-1 min-w-72 min-h-48" />
-      <USkeleton class="flex-1 min-w-72 min-h-48" />
-      <USkeleton class="flex-1 min-w-72 min-h-48" />
-      <USkeleton class="flex-1 min-w-72 min-h-48" />
-      <USkeleton class="flex-1 min-w-72 min-h-48" />
-      <USkeleton class="flex-1 min-w-72 min-h-48" />
-      <USkeleton class="flex-1 min-w-72 min-h-48" />
-      <USkeleton class="flex-1 min-w-72 min-h-48" />
+      <div
+        v-for="n in 12"
+        :key="n"
+        class="flex-1 min-w-72 min-h-56 flex flex-col gap-4"
+      >
+        <div class="w-full min-h-48">
+          <USkeleton class="flex-1 min-w-72 min-h-48 bg-neutral-500/10" />
+        </div>
+
+        <div class="flex align-top justify-between">
+          <div>
+            <USkeleton class="min-w-32 min-h-4 bg-neutral-500/40" />
+          </div>
+          <div>
+            <USkeleton class="min-w-12 min-h-4 bg-neutral-500/20" />
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Products grid -->
@@ -51,9 +60,10 @@ const _searchQuery = useProductSearch();
       v-else-if="products.data.value?.length"
       class="flex flex-wrap gap-8 space-y-8"
     >
-      <div
+      <NuxtLink
         v-for="product in products.data.value"
         :key="product.id"
+        :href="`/products/${product.slug}`"
         class="flex-1 min-w-72 min-h-56 flex flex-col gap-4"
       >
         <div class="w-full min-h-48 bg-neutral-400/5">image</div>
@@ -61,22 +71,7 @@ const _searchQuery = useProductSearch();
           <div class="font-medium">{{ product.name }}</div>
           <div class="text-sm text-neutral-500">price</div>
         </div>
-      </div>
-
-      <!-- <UCard
-        v-for="product in products.data.value"
-        :key="product.id"
-        class="flex-1 flex-shrink min-w-80 min-h-56"
-      >
-        <template #header>
-          <div class="w-full h-40 bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center rounded-t-lg mb-2">
-            <UIcon name="i-tabler-photo" class="text-4xl text-neutral-400" />
-          </div>
-        </template>
-        <h3 class="text-xl font-semibold">{{ product.name }}</h3>
-
-        <template #footer> price, rating, etc. </template>
-      </UCard> -->
+      </NuxtLink>
     </div>
 
     <!-- Empty state -->

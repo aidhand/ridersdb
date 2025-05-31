@@ -11,6 +11,9 @@
       "dependsOn": ["build"],
       "persistent": true
     },
+    "prepare": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true

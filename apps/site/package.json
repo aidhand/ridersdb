@@ -5,12 +5,11 @@
   "scripts": {
     "build": "bun run -b nuxt build",
     "start": "nuxt preview",
+    "prepare": "nuxt prepare",
     "dev": "nuxt dev --port 3000",
-    "preview": "nuxt preview",
     "lint": "eslint .",
     "test": "vitest run",
-    "typecheck": "vue-tsc --noEmit && tsc --noEmit",
-    "postinstall": "nuxt prepare"
+    "typecheck": "vue-tsc --noEmit && tsc --noEmit"
   },
   "dependencies": {
     "@faker-js/faker": "^9.8.0",
@@ -33,6 +32,8 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.45",
+    "@iconify-json/tabler": "^1.2.18",
     "@tailwindcss/vite": "^4.1.7",
     "@types/bun": "latest",
     "@vue/test-utils": "^2.4.6",

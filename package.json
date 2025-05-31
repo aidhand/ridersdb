@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "start": "turbo run start",
+    "prepare": "turbo run prepare",
     "dev": "turbo run dev",
     "format": "prettier --write .",
     "lint": "turbo run lint",

@@ -38,59 +38,37 @@ useSeoMeta({
 
 <template>
   <PageWrapper>
-    <!-- Breadcrumb Navigation -->
-    <nav aria-label="Breadcrumb">
-      <ol class="flex items-center gap-2 text-sm text-neutral-500/70">
-        <li>
-          <NuxtLink
-            to="/"
-            class="hover:text-neutral-500/90 transition-colors"
-          >
-            Home
-          </NuxtLink>
-        </li>
-        <span>/</span>
-        <li>
-          <NuxtLink
-            to="/products"
-            class="hover:text-neutral-500/90 transition-colors"
-          >
-            Products
-          </NuxtLink>
-        </li>
-        <span>/</span>
-        <li
-          class="text-neutral-500/50"
-          aria-current="page"
-        >
-          {{ product?.name || "Product Details" }}
-        </li>
-      </ol>
-    </nav>
-
-    <!-- Page Header -->
-    <div class="flex items-center justify-between">
-      <BackButton
-        text="Back to Products"
-        to="/products"
-      />
-      <div
-        v-if="product"
-        class="flex gap-3"
-      >
-        <button
-          type="button"
-          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-500/90 bg-neutral-500/10 border border-neutral-500/20 rounded-lg hover:bg-neutral-500/20 hover:text-neutral-500 transition-colors"
-          @click="$router.push(`/products/${product.slug}/edit`)"
-        >
-          <Icon
-            name="tabler:pencil"
-            class="w-4 h-4"
-          />
-          Edit
-        </button>
-      </div>
-    </div>
+    <!-- Page Header Navigation -->
+    <PageHeaderNav
+      :breadcrumbs="[
+        { label: 'Products', to: '/products', icon: 'i-tabler-package' },
+        { label: product?.name || 'Product Details' },
+      ]"
+      :actions="
+        product ?
+          [
+            {
+              label: 'Edit',
+              icon: 'i-tabler-pencil',
+              color: 'primary',
+              variant: 'outline',
+              onClick: () =>
+                product && $router.push(`/products/${product.slug}/edit`),
+            },
+            {
+              label: 'Delete',
+              icon: 'i-tabler-trash',
+              color: 'error',
+              variant: 'outline',
+              onClick: () => console.log('Delete product'),
+            },
+          ]
+        : []
+      "
+      show-back-button
+      back-button-text="Back to Products"
+      back-button-to="/products"
+    />
 
     <!-- Loading State -->
     <div

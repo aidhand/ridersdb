@@ -60,6 +60,17 @@ useSeoMeta({
 
 <template>
   <PageWrapper>
+    <!-- Page Header Navigation -->
+    <PageHeaderNav
+      :breadcrumbs="[
+        { label: 'Products', to: '/products', icon: 'i-tabler-package' },
+        { label: 'Create New Product' },
+      ]"
+      show-back-button
+      back-button-text="Back to Products"
+      back-button-to="/products"
+    />
+
     <!-- Page Header -->
     <ProductPageHeader>
       <template #title>Create New Product</template>
