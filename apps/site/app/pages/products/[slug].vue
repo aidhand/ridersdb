@@ -1,4 +1,6 @@
+import { BackButton } from '../../../.nuxt/components';
 <script setup lang="ts">
+import { Icon } from "#components";
 import type {
   Brand,
   Collection,
@@ -44,32 +46,26 @@ useSeoMeta({
         { label: 'Products', to: '/products', icon: 'i-tabler-package' },
         { label: product?.name || 'Product Details' },
       ]"
-      :actions="
-        product ?
-          [
-            {
-              label: 'Edit',
-              icon: 'i-tabler-pencil',
-              color: 'primary',
-              variant: 'outline',
-              onClick: () =>
-                product && $router.push(`/products/${product.slug}/edit`),
-            },
-            {
-              label: 'Delete',
-              icon: 'i-tabler-trash',
-              color: 'error',
-              variant: 'outline',
-              onClick: () => console.log('Delete product'),
-            },
-          ]
-        : []
-      "
-      show-back-button
-      back-button-text="Back to Products"
-      back-button-to="/products"
-    />
-
+    >
+      <template #actions>
+        <BackButton />
+        <UButton
+          icon="i-tabler-heart"
+          color="neutral"
+          variant="outline"
+        >
+          Save
+        </UButton>
+        <UButton
+          icon="i-tabler-edit"
+          color="neutral"
+          variant="outline"
+          :href="`/products/edit/${product?.slug}`"
+        >
+          Edit
+        </UButton>
+      </template>
+    </PageHeaderNav>
     <!-- Loading State -->
     <div
       v-if="pending"
@@ -79,7 +75,7 @@ useSeoMeta({
         name="tabler:loader-2"
         class="w-10 h-10 animate-spin text-primary-500/70 mb-4"
       />
-      <p class="text-lg text-neutral-500/70">Loading product details...</p>
+      <p class="text-lg">Loading product details...</p>
     </div>
 
     <!-- Error State -->
@@ -97,164 +93,196 @@ useSeoMeta({
       <p class="text-red-500/70 mb-6">{{ error }}</p>
       <button
         type="button"
-        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-500/90 bg-neutral-500/10 border border-neutral-500/20 rounded-lg hover:bg-neutral-500/20 transition-colors"
+        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-neutral-500/10 border border-neutral-500/20 rounded-lg hover:bg-neutral-500/20 transition-colors"
         @click="$router.push('/products')"
       >
         Return to Products
       </button>
     </div>
-
     <!-- Product Content -->
     <div
       v-else-if="product"
       class="space-y-8"
     >
-      <!-- Product Header -->
-      <div class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg p-6">
-        <div
-          class="flex flex-col md:flex-row md:items-start md:justify-between gap-4"
-        >
-          <div class="space-y-3">
-            <h1 class="text-3xl font-bold text-neutral-500/90">
-              {{ product.name }}
-            </h1>
-            <p
-              v-if="product.description"
-              class="text-lg text-neutral-500/70 max-w-3xl"
-            >
-              {{ product.description }}
-            </p>
-          </div>
+      <!-- Two Column Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Left Column: Product Images -->
+        <div class="space-y-6">
+          <!-- Main Product Image -->
           <div
-            class="shrink-0 px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-lg"
+            class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg aspect-square flex items-center justify-center"
           >
-            <span class="text-sm font-medium text-primary-500/80">
-              {{ product.id.substring(0, 8) }}...
-            </span>
+            <div class="text-center space-y-3">
+              <Icon
+                name="tabler:photo"
+                class="w-16 h-16 text-neutral-500/30 mx-auto"
+              />
+              <p class="text-sm">Product Image</p>
+            </div>
+          </div>
+
+          <!-- Thumbnail Gallery -->
+          <div class="grid grid-cols-4 gap-3">
+            <div
+              v-for="i in 4"
+              :key="i"
+              class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg aspect-square flex items-center justify-center"
+            >
+              <Icon
+                name="tabler:photo"
+                class="w-6 h-6 text-neutral-500/30"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Product Information -->
+        <div class="space-y-6">
+          <!-- Product Header -->
+          <div
+            class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg p-6"
+          >
+            <div class="space-y-4">
+              <div class="flex items-start justify-between gap-4">
+                <div class="space-y-3 flex-1">
+                  <h1 class="text-3xl font-bold">
+                    {{ product.name }}
+                  </h1>
+                  <p
+                    v-if="product.description"
+                    class="text-lg"
+                  >
+                    {{ product.description }}
+                  </p>
+                </div>
+                <div
+                  class="shrink-0 px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-lg"
+                >
+                  <span class="text-sm font-medium text-primary-500/80">
+                    {{ product.id.substring(0, 8) }}...
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brand and Collection Information Grid -->
+          <BaseGrid
+            cols="1 sm:2"
+            gap="4"
+          >
+            <!-- Brand Information -->
+            <div
+              class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg"
+            >
+              <div class="border-b border-neutral-500/20 p-4">
+                <div class="flex items-center gap-2">
+                  <Icon
+                    name="tabler:building"
+                    class="w-5 h-5"
+                  />
+                  <h3 class="text-lg font-semibold">Brand</h3>
+                </div>
+              </div>
+              <div class="p-4 space-y-3">
+                <div>
+                  <h4 class="font-semibold">
+                    {{ product?.brandDetails?.name || "Unknown Brand" }}
+                  </h4>
+                  <p
+                    v-if="product?.brandDetails?.description"
+                    class="text-sm mt-1"
+                  >
+                    {{ product.brandDetails.description }}
+                  </p>
+                  <p
+                    v-else
+                    class="text-sm italic mt-1"
+                  >
+                    No brand description available
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Collection Information -->
+            <div
+              class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg"
+            >
+              <div class="border-b border-neutral-500/20 p-4">
+                <div class="flex items-center gap-2">
+                  <Icon
+                    name="tabler:folder"
+                    class="w-5 h-5"
+                  />
+                  <h3 class="text-lg font-semibold">Collection</h3>
+                </div>
+              </div>
+              <div class="p-4 space-y-3">
+                <div>
+                  <h4 class="font-semibold">
+                    {{ product?.collectionDetails?.name || "No Collection" }}
+                  </h4>
+                  <p
+                    v-if="product?.collectionDetails?.description"
+                    class="text-sm mt-1"
+                  >
+                    {{ product.collectionDetails.description }}
+                  </p>
+                  <p
+                    v-else
+                    class="text-sm italic mt-1"
+                  >
+                    This product is not part of a collection
+                  </p>
+                </div>
+              </div>
+            </div>
+          </BaseGrid>
+
+          <!-- Product Metadata -->
+          <div class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg">
+            <div class="border-b border-neutral-500/20 p-4">
+              <div class="flex items-center gap-2">
+                <Icon
+                  name="tabler:info-circle"
+                  class="w-5 h-5"
+                />
+                <h3 class="text-lg font-semibold">Product Details</h3>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <p class="text-sm font-medium">Product ID</p>
+                  <p class="text-sm font-mono">
+                    {{ product.id }}
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <p class="text-sm font-medium">Slug</p>
+                  <p class="text-sm font-mono">
+                    {{ product.slug }}
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <p class="text-sm font-medium">Created</p>
+                  <p class="text-sm">
+                    {{ new Date(product.createdAt).toLocaleDateString() }}
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <p class="text-sm font-medium">Last Updated</p>
+                  <p class="text-sm">
+                    {{ new Date(product.updatedAt).toLocaleDateString() }}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- Product Details Grid -->
-      <BaseGrid
-        cols="1 md:2"
-        gap="6"
-      >
-        <!-- Brand Information -->
-        <div class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg">
-          <div class="border-b border-neutral-500/20 p-4">
-            <div class="flex items-center gap-2">
-              <Icon
-                name="tabler:building"
-                class="w-5 h-5 text-neutral-500/70"
-              />
-              <h3 class="text-lg font-semibold text-neutral-500/90">
-                Brand Information
-              </h3>
-            </div>
-          </div>
-          <div class="p-6 space-y-3">
-            <div>
-              <h4 class="font-semibold text-neutral-500/90">
-                {{ product?.brandDetails?.name || "Unknown Brand" }}
-              </h4>
-              <p
-                v-if="product?.brandDetails?.description"
-                class="text-sm text-neutral-500/70 mt-1"
-              >
-                {{ product.brandDetails.description }}
-              </p>
-              <p
-                v-else
-                class="text-sm text-neutral-500/50 italic mt-1"
-              >
-                No brand description available
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Collection Information -->
-        <div class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg">
-          <div class="border-b border-neutral-500/20 p-4">
-            <div class="flex items-center gap-2">
-              <Icon
-                name="tabler:folder"
-                class="w-5 h-5 text-neutral-500/70"
-              />
-              <h3 class="text-lg font-semibold text-neutral-500/90">
-                Collection
-              </h3>
-            </div>
-          </div>
-          <div class="p-6 space-y-3">
-            <div>
-              <h4 class="font-semibold text-neutral-500/90">
-                {{ product?.collectionDetails?.name || "No Collection" }}
-              </h4>
-              <p
-                v-if="product?.collectionDetails?.description"
-                class="text-sm text-neutral-500/70 mt-1"
-              >
-                {{ product.collectionDetails.description }}
-              </p>
-              <p
-                v-else
-                class="text-sm text-neutral-500/50 italic mt-1"
-              >
-                This product is not part of a collection
-              </p>
-            </div>
-          </div>
-        </div>
-      </BaseGrid>
-
-      <!-- Product Metadata -->
-      <div class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg">
-        <div class="border-b border-neutral-500/20 p-4">
-          <div class="flex items-center gap-2">
-            <Icon
-              name="tabler:info-circle"
-              class="w-5 h-5 text-neutral-500/70"
-            />
-            <h3 class="text-lg font-semibold text-neutral-500/90">
-              Product Details
-            </h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="space-y-1">
-              <p class="text-sm font-medium text-neutral-500/70">Product ID</p>
-              <p class="text-sm text-neutral-500/90 font-mono">
-                {{ product.id }}
-              </p>
-            </div>
-            <div class="space-y-1">
-              <p class="text-sm font-medium text-neutral-500/70">Slug</p>
-              <p class="text-sm text-neutral-500/90 font-mono">
-                {{ product.slug }}
-              </p>
-            </div>
-            <div class="space-y-1">
-              <p class="text-sm font-medium text-neutral-500/70">Created</p>
-              <p class="text-sm text-neutral-500/90">
-                {{ new Date(product.createdAt).toLocaleDateString() }}
-              </p>
-            </div>
-            <div class="space-y-1">
-              <p class="text-sm font-medium text-neutral-500/70">
-                Last Updated
-              </p>
-              <p class="text-sm text-neutral-500/90">
-                {{ new Date(product.updatedAt).toLocaleDateString() }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Variants Section -->
+      <!-- Variants Section (Full Width Below Two Columns) -->
       <div
         v-if="product.variants && product.variants.length > 0"
         class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg"
@@ -264,11 +292,9 @@ useSeoMeta({
             <div class="flex items-center gap-2">
               <Icon
                 name="tabler:versions"
-                class="w-5 h-5 text-neutral-500/70"
+                class="w-5 h-5"
               />
-              <h3 class="text-lg font-semibold text-neutral-500/90">
-                Product Variants
-              </h3>
+              <h3 class="text-lg font-semibold">Product Variants</h3>
             </div>
             <div
               class="px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-lg"
@@ -286,22 +312,22 @@ useSeoMeta({
               <thead>
                 <tr class="border-b border-neutral-500/20">
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-neutral-500/70 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
                   >
                     SKU
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-neutral-500/70 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
                   >
                     Size
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-neutral-500/70 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
                   >
                     Color
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-neutral-500/70 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
                   >
                     Material
                   </th>
@@ -313,23 +339,17 @@ useSeoMeta({
                   :key="variant.id"
                   class="hover:bg-neutral-500/5 transition-colors"
                 >
-                  <td class="px-4 py-3 text-sm font-medium text-neutral-500/90">
-                    sku
-                  </td>
-                  <td class="px-4 py-3 text-sm text-neutral-500/70">
+                  <td class="px-4 py-3 text-sm font-medium">sku</td>
+                  <td class="px-4 py-3 text-sm">
                     <span
                       v-if="variant.size"
                       class="px-2 py-1 bg-neutral-500/10 border border-neutral-500/20 rounded text-xs"
                     >
                       {{ variant.size }}
                     </span>
-                    <span
-                      v-else
-                      class="text-neutral-500/50"
-                      >—</span
-                    >
+                    <span v-else>—</span>
                   </td>
-                  <td class="px-4 py-3 text-sm text-neutral-500/70">
+                  <td class="px-4 py-3 text-sm">
                     <div
                       v-if="variant.color"
                       class="flex items-center gap-2"
@@ -341,15 +361,9 @@ useSeoMeta({
                       ></div>
                       {{ variant.color }}
                     </div>
-                    <span
-                      v-else
-                      class="text-neutral-500/50"
-                      >—</span
-                    >
+                    <span v-else>—</span>
                   </td>
-                  <td class="px-4 py-3 text-sm text-neutral-500/70">
-                    material
-                  </td>
+                  <td class="px-4 py-3 text-sm">material</td>
                 </tr>
               </tbody>
             </table>
@@ -357,7 +371,7 @@ useSeoMeta({
         </div>
       </div>
 
-      <!-- No Variants State -->
+      <!-- No Variants State (Full Width Below Two Columns) -->
       <div
         v-else
         class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg"
@@ -366,21 +380,17 @@ useSeoMeta({
           <div class="flex items-center gap-2">
             <Icon
               name="tabler:versions"
-              class="w-5 h-5 text-neutral-500/70"
+              class="w-5 h-5"
             />
-            <h3 class="text-lg font-semibold text-neutral-500/90">
-              Product Variants
-            </h3>
+            <h3 class="text-lg font-semibold">Product Variants</h3>
           </div>
         </div>
         <div class="p-12 text-center">
           <Icon
             name="tabler:packages"
-            class="w-12 h-12 text-neutral-500/30 mx-auto mb-3"
+            class="w-12 h-12 mx-auto mb-3"
           />
-          <p class="text-neutral-500/70">
-            No variants available for this product
-          </p>
+          <p>No variants available for this product</p>
           <button
             v-if="product"
             type="button"
@@ -396,7 +406,7 @@ useSeoMeta({
         </div>
       </div>
 
-      <!-- Actions -->
+      <!-- Actions (Full Width Below Everything) -->
       <div
         class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-neutral-500/20"
       >

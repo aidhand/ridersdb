@@ -51,18 +51,9 @@ withDefaults(defineProps<Props>(), {
           />
         </slot>
       </template>
-      <template v-else>
-        <slot name="back">
-          <BackButton
-            v-if="showBackButton"
-            :text="backButtonText"
-            :to="backButtonTo"
-          />
-        </slot>
-      </template>
     </section>
-    <section>
-      <slot name="actions"> </slot>
+    <section class="flex align-top gap-4">
+      <slot name="actions"></slot>
     </section>
   </nav>
   <slot />
