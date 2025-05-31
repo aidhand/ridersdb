@@ -96,15 +96,16 @@ export const productsRelations = relations(products, ({ one, many }) => ({
 export const variants = pgTable("variants", {
   id: uuid("id").primaryKey().defaultRandom(),
 
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),
+
+  size: text("size"),
+  color: text("color"),
+  metadata: jsonb("metadata"),
+
   product: uuid("product")
     .notNull()
     .references(() => products.id),
-
-  sku: text("sku").notNull(),
-  size: text("size"),
-  color: text("color"),
-  material: text("material"),
-  metadata: jsonb("metadata"),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")

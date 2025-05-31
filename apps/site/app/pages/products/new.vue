@@ -1,261 +1,261 @@
 <script setup lang="ts">
-// Removed unused FormSubmitEvent import
-import slugify from "slugify";
-import * as v from "valibot";
-// Router and loading state for product creation
-import { useRouter } from "vue-router";
+import type { Brand, Collection } from "@repo/validation/types";
 
-const schema = v.object({
-  name: v.pipe(v.string()),
-  slug: v.pipe(v.string()),
-  description: v.optional(v.string()),
-  brand: v.pipe(v.string()),
-  collection: v.pipe(v.string()),
-});
+interface FormData {
+  name: string;
+  description: string;
+  brand: string;
+  collection: string;
+}
 
-// Removed unused Schema type
-
-const state = reactive({
+// Form state
+const form = reactive<FormData>({
   name: "",
-  slug: "",
   description: "",
   brand: "",
   collection: "",
 });
 
-// Automatically generate slug from product name
-watch(
-  () => state.name,
-  (name) => {
-    state.slug = slugify(name, { lower: true, strict: true });
-  }
-);
+// Data fetching
+const { data: brands } = useFetch<Brand[]>("/api/brands");
+const { data: collections } = useFetch<Collection[]>("/api/collections");
 
-const orpc = useOrpc();
-const router = useRouter();
-const productLoading = ref(false);
-const brands = ref<{ id: string; name: string; slug: string }[]>(
-  await orpc.listBrands({})
-);
-
-const collections = ref<{ id: string; name: string; slug: string }[]>(
-  await orpc.listCollections({})
-);
-
-const brandMenuOpen = ref(false);
-const brandMenuLoading = ref(false);
-
-const brandSearch = ref("");
-const canCreateBrand = computed(() => {
-  return !brands.value.some(
-    (b) => b.name.toLowerCase() === brandSearch.value.trim().toLowerCase()
-  );
+const selectedBrandName = computed(() => {
+  return brands.value?.find((b) => b.id === form.brand)?.name || "";
 });
 
-async function onNewBrand(brand: string) {
-  // Handle the creation of a new brand
-  console.log("Creating new brand:", brand);
-
-  // Close the list and set loading state
-  brandMenuOpen.value = false;
-  brandMenuLoading.value = true;
-
-  const newBrand = {
-    name: brand,
-    slug: slugify(brand, {
-      lower: true,
-      strict: true,
-    }),
-  };
-
-  orpc
-    .createBrand({
-      data: newBrand,
-    })
-    .then((res) => {
-      // Handle success by storing the new brand id
-      state.brand = res?.id || "";
-      brands.value.push({
-        id: res?.id || "",
-        name: res?.name || "",
-        slug: res?.slug || "",
-      });
-    })
-    .catch((err) => {
-      // Handle error
-      console.error("Error creating brand:", err);
-    })
-    .finally(() => {
-      // Set loading state to false
-      brandMenuLoading.value = false;
-    });
-}
-
-const collectionMenuOpen = ref(false);
-const collectionMenuLoading = ref(false);
-
-const collectionSearch = ref("");
-const canCreateCollection = computed(() => {
-  return !collections.value.some(
-    (c) => c.name.toLowerCase() === collectionSearch.value.trim().toLowerCase()
-  );
+const selectedCollectionName = computed(() => {
+  return collections.value?.find((c) => c.id === form.collection)?.name || "";
 });
 
-async function onNewCollection(collection: string) {
-  // Handle the creation of a new item
-  console.log("Creating new collection:", collection);
+// Form submission
+const isSubmitting = ref(false);
 
-  // Close the list and set loading state
-  collectionMenuOpen.value = false;
-  collectionMenuLoading.value = true;
+async function createProduct() {
+  if (isSubmitting.value) return;
 
-  const newCollection = {
-    name: collection,
-    slug: slugify(collection, {
-      lower: true,
-      strict: true,
-    }),
-  };
+  isSubmitting.value = true;
 
-  // TODO: don't attempt to create a collection if it already exists
-  // TODO: use pinia colada
-  // TODO: handle error
-  orpc
-    .createCollection({ data: newCollection })
-    .then((res) => {
-      // Handle success by storing the new collection id
-      state.collection = res?.id || "";
-      collections.value.push({
-        id: res?.id || "",
-        name: res?.name || "",
-        slug: res?.slug || "",
-      });
-    })
-    .catch((err) => {
-      // Handle error
-      console.error("Error creating collection:", err);
-    })
-    .finally(() => {
-      // Set loading state to false
-      collectionMenuLoading.value = false;
-    });
-}
-
-async function onSubmit() {
-  productLoading.value = true;
   try {
-    const created = await orpc.createProduct({ data: state });
+    await $fetch("/api/products", {
+      method: "POST",
+      body: form,
+    });
 
-    if (created) {
-      router.push(`/products/${created.slug}`);
-    }
-  } catch (err) {
-    console.error("Error creating product:", err);
+    await navigateTo("/products");
+  } catch (error) {
+    console.error("Error creating product:", error);
+    // Handle error state here
   } finally {
-    productLoading.value = false;
+    isSubmitting.value = false;
   }
 }
+
+// SEO
+useSeoMeta({
+  title: "Create New Product - RidersDB",
+  description: "Add a new motorcycle gear product to your catalog",
+});
 </script>
 
 <template>
-  <div class="flex flex-col gap-16">
-    <section class="flex gap-8 items-bottom justify-between">
-      <div>
-        <h1 class="text-3xl font-semibold">New product</h1>
-      </div>
+  <PageWrapper>
+    <!-- Page Header -->
+    <ProductPageHeader>
+      <template #title>Create New Product</template>
+      <template #subtitle>Add a new product to your catalog</template>
+      <template #actions>
+        <BackButton
+          text="Back to Products"
+          to="/products"
+        />
+      </template>
+    </ProductPageHeader>
 
-      <div class="flex flex-col gap-4 justify-end">
-        <div class="flex flex-wrap gap-4 justify-end">
-          <UButton
-            to="/products"
-            color="primary"
-            icon="i-tabler-arrow-left"
+    <!-- Form Content -->
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Form Fields -->
+      <div class="flex-1 space-y-8">
+        <!-- Product Name -->
+        <div
+          class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg p-6"
+        >
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-neutral-500/90">
+              Product Name
+            </h3>
+            <input
+              v-model="form.name"
+              type="text"
+              placeholder="Enter product name"
+              class="w-full px-4 py-3 bg-transparent border border-neutral-500/20 rounded-lg text-neutral-500/90 placeholder-neutral-500/50 focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
+            />
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div
+          class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg p-6"
+        >
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-neutral-500/90">
+              Description
+            </h3>
+            <textarea
+              v-model="form.description"
+              placeholder="Enter product description"
+              rows="4"
+              class="w-full px-4 py-3 bg-transparent border border-neutral-500/20 rounded-lg text-neutral-500/90 placeholder-neutral-500/50 focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors resize-none"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Brand Selection -->
+        <div
+          class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg p-6"
+        >
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-neutral-500/90">Brand</h3>
+            <select
+              v-model="form.brand"
+              class="w-full px-4 py-3 bg-transparent border border-neutral-500/20 rounded-lg text-neutral-500/90 focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
+            >
+              <option
+                value=""
+                class="bg-white dark:bg-neutral-900"
+              >
+                Select a brand
+              </option>
+              <option
+                v-for="brand in brands"
+                :key="brand.id"
+                :value="brand.id"
+                class="bg-white dark:bg-neutral-900"
+              >
+                {{ brand.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Collection Selection -->
+        <div
+          class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg p-6"
+        >
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-neutral-500/90">
+              Collection
+            </h3>
+            <select
+              v-model="form.collection"
+              class="w-full px-4 py-3 bg-transparent border border-neutral-500/20 rounded-lg text-neutral-500/90 focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
+            >
+              <option
+                value=""
+                class="bg-white dark:bg-neutral-900"
+              >
+                Select a collection
+              </option>
+              <option
+                v-for="collection in collections"
+                :key="collection.id"
+                :value="collection.id"
+                class="bg-white dark:bg-neutral-900"
+              >
+                {{ collection.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end pt-4">
+          <button
+            type="button"
+            :disabled="isSubmitting || !form.name.trim()"
+            class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-white bg-primary-500 border border-primary-500 rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            @click="createProduct"
           >
-            Back
-          </UButton>
+            <Icon
+              v-if="isSubmitting"
+              name="tabler:loader-2"
+              class="w-4 h-4 animate-spin"
+            />
+            <Icon
+              v-else
+              name="tabler:plus"
+              class="w-4 h-4"
+            />
+            {{ isSubmitting ? "Creating..." : "Create Product" }}
+          </button>
         </div>
       </div>
-    </section>
 
-    <section>
-      <UForm
-        :schema="schema"
-        :state="state"
-        class="flex flex-col gap-12"
-        @submit="onSubmit"
-      >
-        <UFormField
-          label="Name"
-          name="name"
+      <!-- Preview Panel -->
+      <div class="lg:w-96">
+        <div
+          class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg sticky top-8"
         >
-          <UInput v-model="state.name" />
-        </UFormField>
-        <USeparator />
-        <UFormField
-          label="Description"
-          name="description"
-        >
-          <UTextarea v-model="state.description" />
-        </UFormField>
-        <USeparator />
-        <UFormField
-          label="Brand"
-          name="brand"
-        >
-          <UInputMenu
-            v-model="state.brand"
-            v-model:open="brandMenuOpen"
-            v-model:search-term="brandSearch"
-            :items="brands"
-            :disabled="brandMenuLoading"
-            :create-item="canCreateBrand ? 'always' : false"
-            label-key="name"
-            value-key="id"
-            required
-            @create="onNewBrand"
-          />
-        </UFormField>
-        <USeparator />
-        <UFormField
-          label="Collection"
-          name="collection"
-        >
-          <UInputMenu
-            v-model="state.collection"
-            v-model:open="collectionMenuOpen"
-            v-model:search-term="collectionSearch"
-            :items="collections"
-            :disabled="collectionMenuLoading"
-            :create-item="canCreateCollection ? 'always' : false"
-            label-key="name"
-            value-key="id"
-            required
-            @create="onNewCollection"
-          />
-        </UFormField>
-        <USeparator />
-        <div class="flex justify-end">
-          <UButton
-            type="submit"
-            color="primary"
-            :loading="productLoading"
-          >
-            Create Product
-          </UButton>
+          <div class="border-b border-neutral-500/20 p-4">
+            <div class="flex items-center gap-2">
+              <Icon
+                name="tabler:package"
+                class="w-5 h-5 text-primary-500"
+              />
+              <h3 class="text-lg font-semibold text-neutral-500/90">Preview</h3>
+            </div>
+          </div>
+          <div class="p-6 space-y-6">
+            <!-- Name Preview -->
+            <div>
+              <p
+                class="text-xs font-medium text-neutral-500/70 uppercase tracking-wider mb-2"
+              >
+                Name
+              </p>
+              <p class="text-xl font-bold text-neutral-500/90">
+                {{ form.name || "Product name..." }}
+              </p>
+            </div>
+
+            <!-- Description Preview -->
+            <div>
+              <p
+                class="text-xs font-medium text-neutral-500/70 uppercase tracking-wider mb-2"
+              >
+                Description
+              </p>
+              <p class="text-neutral-500/70">
+                {{ form.description || "Product description..." }}
+              </p>
+            </div>
+
+            <!-- Brand & Collection Preview -->
+            <div class="grid grid-cols-1 gap-4">
+              <div>
+                <p
+                  class="text-xs font-medium text-neutral-500/70 uppercase tracking-wider mb-2"
+                >
+                  Brand
+                </p>
+                <p class="text-neutral-500/70">
+                  {{ selectedBrandName || "No brand selected" }}
+                </p>
+              </div>
+              <div>
+                <p
+                  class="text-xs font-medium text-neutral-500/70 uppercase tracking-wider mb-2"
+                >
+                  Collection
+                </p>
+                <p class="text-neutral-500/70">
+                  {{ selectedCollectionName || "No collection selected" }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </UForm>
-    </section>
-
-    <section class="flex gap-8 items-bottom justify-between">
-      <pre class="text-xs"
-        >{{ state }}
-brandsearchterm: {{ brandSearch }}
-cancreateBrand: {{ canCreateBrand }}
-
-collectionsearchterm: {{ collectionSearch }}
-cancreateCollection: {{ canCreateCollection }}
-
-      </pre>
-    </section>
-  </div>
+      </div>
+    </div>
+  </PageWrapper>
 </template>

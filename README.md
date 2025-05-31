@@ -1,84 +1,47 @@
-# Turborepo starter
+# RidersDB Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+RidersDB is a platform to search, compare, and find motorcycles, gear, and accessories.
 
-## Using this example
+## Monorepo Structure
 
-Run the following command:
+- `apps/site`: Main Nuxt 3 web application
+- `packages/db`: Database ORM and schema (Drizzle ORM)
+- `packages/types`: Shared TypeScript types
+- `packages/validation`: Validation schemas (valibot)
+- `packages/config`: Shared ESLint and TypeScript config
 
-```sh
-npx create-turbo@latest
-```
+## Getting Started
 
-## What's inside?
+1. Install dependencies:
+   ```sh
+   bun install
+   # or npm install / yarn install / pnpm install
+   ```
+2. Copy `.env.example` to `.env` and fill in required values (e.g., `DATABASE_URL`).
+3. Run the development server:
+   ```sh
+   bun run dev
+   # or npm run dev / yarn dev / pnpm dev
+   ```
 
-This Turborepo includes the following packages/apps:
+## Scripts
 
-### Apps and Packages
+- `dev`: Start development server
+- `build`: Build all apps and packages
+- `lint`: Lint all code (ESLint Flat Config, TypeScript support)
+- `format`: Format codebase (Prettier)
+- `typecheck`: Type check all packages and apps
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## TypeScript & Linting
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- Uses ESLint Flat Config with TypeScript support via `@typescript-eslint`.
+- Shared config in `packages/config`.
+- Each package/app has a `typecheck` script for type safety.
 
-### Utilities
+## License
 
-This Turborepo has some additional tools already setup for you:
+See [LICENSE](./LICENSE).
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+---
 
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+For more details, see the documentation in each package/app.
