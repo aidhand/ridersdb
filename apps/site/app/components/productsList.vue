@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ImagePlaceholder from "./ImagePlaceholder.vue";
+
 // Fetch products using useFetch composable which handles loading and error states
 const products = useFetch("/api/products");
 const _searchQuery = useProductSearch();
@@ -66,7 +68,9 @@ const _searchQuery = useProductSearch();
         :href="`/products/${product.slug}`"
         class="flex-1 min-w-72 min-h-56 flex flex-col gap-4"
       >
-        <div class="w-full min-h-48 bg-neutral-400/5">image</div>
+        <div>
+          <ImagePlaceholder />
+        </div>
         <div class="flex align-top justify-between">
           <div class="font-medium">{{ product.name }}</div>
           <div class="text-sm text-neutral-500">price</div>

@@ -1,6 +1,4 @@
-import { BackButton } from '../../../.nuxt/components';
 <script setup lang="ts">
-import { Icon } from "#components";
 import type {
   Brand,
   Collection,
@@ -107,37 +105,20 @@ useSeoMeta({
       <!-- Two Column Layout -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Left Column: Product Images -->
-        <div class="space-y-6">
+        <div class="space-y-4">
           <!-- Main Product Image -->
-          <div
-            class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg aspect-square flex items-center justify-center"
-          >
-            <div class="text-center space-y-3">
-              <Icon
-                name="tabler:photo"
-                class="w-16 h-16 text-neutral-500/30 mx-auto"
-              />
-              <p class="text-sm">Product Image</p>
-            </div>
-          </div>
-
+          <ImagePlaceholder label="Product Image" />
           <!-- Thumbnail Gallery -->
-          <div class="grid grid-cols-4 gap-3">
-            <div
+          <div class="grid grid-cols-4 gap-4">
+            <ImagePlaceholder
               v-for="i in 4"
               :key="i"
-              class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg aspect-square flex items-center justify-center"
-            >
-              <Icon
-                name="tabler:photo"
-                class="w-6 h-6 text-neutral-500/30"
-              />
-            </div>
+            />
           </div>
         </div>
 
         <!-- Right Column: Product Information -->
-        <div class="space-y-6">
+        <div class="space-y-4">
           <!-- Product Header -->
           <div
             class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg p-6"
