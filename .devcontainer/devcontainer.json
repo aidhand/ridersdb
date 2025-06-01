@@ -1,4 +1,8 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "features": {}
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "forwardPorts": [5432],
+  "workspaceFolder": "/workspaces",
+  "postCreateCommand": "bash -c 'npm i -g bun'",
+  "postStartCommand": "bash -c 'bun i'"
 }
