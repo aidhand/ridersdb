@@ -1,7 +1,7 @@
 {
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "forwardPorts": [3000, 5432, 8000],
+  "forwardPorts": [80, 443, 3000, 5432, 8000],
   "workspaceFolder": "/workspaces",
   "postStartCommand": "bash -c 'bun i'"
 }

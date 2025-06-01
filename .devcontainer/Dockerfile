@@ -5,6 +5,9 @@ FROM mcr.microsoft.com/devcontainers/universal:2
 RUN npm i -g npm@latest
 RUN npm i -g bun
 
+RUN curl https://frankenphp.dev/install.sh | sh
+RUN mv frankenphp /usr/local/bin/
+
 # Set the working directory
 WORKDIR /workspaces
 

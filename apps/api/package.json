@@ -5,8 +5,8 @@
     "scripts": {
         "ui:build": "vite build",
         "ui:dev": "vite --host=localhost",
-        "dev": "php artisan serve",
-        "prepare": "php artisan api-platform:install"
+        "dev": "frankenphp php-server -l localhost:8000 -r public",
+        "prepare": "composer install && composer prepare"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

@@ -12,6 +12,7 @@
       "persistent": true
     },
     "prepare": {
+      "dependsOn": ["^prepare"]
     },
     "dev": {
       "cache": false,
