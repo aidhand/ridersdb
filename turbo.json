@@ -12,7 +12,6 @@
       "persistent": true
     },
     "prepare": {
-      "cache": false
     },
     "dev": {
       "cache": false,
