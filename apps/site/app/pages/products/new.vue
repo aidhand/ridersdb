@@ -187,12 +187,12 @@ useSeoMeta({
             class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-white bg-primary-500 border border-primary-500 rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             @click="createProduct"
           >
-            <Icon
+            <UIcon
               v-if="isSubmitting"
               name="tabler:loader-2"
               class="w-4 h-4 animate-spin"
             />
-            <Icon
+            <UIcon
               v-else
               name="tabler:plus"
               class="w-4 h-4"
@@ -209,7 +209,7 @@ useSeoMeta({
         >
           <div class="border-b border-neutral-500/20 p-4">
             <div class="flex items-center gap-2">
-              <Icon
+              <UIcon
                 name="tabler:package"
                 class="w-5 h-5 text-primary-500"
               />

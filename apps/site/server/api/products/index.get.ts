@@ -4,7 +4,7 @@ import { brands, collections, products } from "@repo/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "~~/server/utils/db";
 
-export default defineEventHandler(async (_event) => {
+export default defineEventHandler(async () => {
   const allProducts = await db
     .select({
       id: products.id,

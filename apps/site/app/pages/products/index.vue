@@ -1,9 +1,8 @@
 <script setup lang="ts">
-// Use shared search state
 const searchQuery = useProductSearch();
 
 useSeoMeta({
-  title: "Products - RideDB",
+  title: "Products",
   description:
     "Browse our comprehensive database of motorcycle gear. Find helmets, jackets, boots, gloves, and more.",
 });
@@ -14,7 +13,17 @@ useSeoMeta({
     <!-- Page Header Navigation -->
     <PageHeaderNav
       :breadcrumbs="[{ label: 'Products', icon: 'i-tabler-package' }]"
-    />
+      ><template #actions>
+        <UButton
+          to="/products/new"
+          color="primary"
+          variant="outline"
+          icon="i-tabler-plus"
+        >
+          Add Product
+        </UButton>
+      </template>
+    </PageHeaderNav>
 
     <!-- Page Header -->
     <ProductPageHeader>
@@ -28,14 +37,6 @@ useSeoMeta({
           icon="i-tabler-search"
           placeholder="Search products..."
         />
-        <UButton
-          to="/products/new"
-          color="primary"
-          variant="outline"
-          icon="i-tabler-plus"
-        >
-          Add Product
-        </UButton>
       </template>
     </ProductPageHeader>
 

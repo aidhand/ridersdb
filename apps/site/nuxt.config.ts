@@ -51,6 +51,7 @@ export default defineNuxtConfig({
     "@nuxt/test-utils/module",
     "@nuxt/ui",
     "@pinia/nuxt",
+    "pinia-plugin-persistedstate/nuxt",
   ],
   fonts: {
     defaults: {

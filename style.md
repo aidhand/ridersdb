@@ -355,22 +355,22 @@ Consistent sizing across components:
 
 ```vue
 <!-- Form input -->
-<UFormGroup label="Product Name" required>
+<UFormField label="Product Name" required>
   <UInput
     v-model="productName"
     placeholder="Enter product name"
     :error="errors.productName"
   />
-</UFormGroup>
+</UFormField>
 
 <!-- Select dropdown -->
-<UFormGroup label="Category">
+<UFormField label="Category">
   <USelect
     v-model="category"
     :options="categoryOptions"
     placeholder="Select category"
   />
-</UFormGroup>
+</UFormField>
 ```
 
 ### Navigation
@@ -776,13 +776,13 @@ const handleClick = (event: MouseEvent) => {
 ```vue
 <UForm :state="form" @submit="onSubmit">
   <div class="space-y-6">
-    <UFormGroup label="Product Name" required>
+    <UFormField label="Product Name" required>
       <UInput v-model="form.name" />
-    </UFormGroup>
+    </UFormField>
 
-    <UFormGroup label="Description">
+    <UFormField label="Description">
       <UTextarea v-model="form.description" />
-    </UFormGroup>
+    </UFormField>
 
     <div class="flex gap-4">
       <UButton type="submit" variant="solid" color="primary">

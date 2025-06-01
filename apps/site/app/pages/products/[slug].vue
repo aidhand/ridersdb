@@ -69,7 +69,7 @@ useSeoMeta({
       v-if="pending"
       class="flex flex-col items-center justify-center py-20 text-center"
     >
-      <Icon
+      <UIcon
         name="tabler:loader-2"
         class="w-10 h-10 animate-spin text-primary-500/70 mb-4"
       />
@@ -81,7 +81,7 @@ useSeoMeta({
       v-else-if="error"
       class="flex flex-col items-center justify-center py-20 text-center bg-red-500/10 border border-red-500/20 rounded-lg"
     >
-      <Icon
+      <UIcon
         name="tabler:alert-triangle"
         class="w-10 h-10 text-red-500 mb-4"
       />

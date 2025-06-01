@@ -8,7 +8,7 @@ defineProps({
   <div
     class="flex flex-col items-center justify-center bg-neutral-500/5 border border-neutral-500/20 rounded-lg aspect-square"
   >
-    <Icon
+    <UIcon
       name="i-tabler-photo"
       class="text-xl text-neutral-500/40 mx-auto"
     />

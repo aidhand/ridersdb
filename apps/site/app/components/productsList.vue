@@ -3,7 +3,8 @@ import ImagePlaceholder from "./ImagePlaceholder.vue";
 
 // Fetch products using useFetch composable which handles loading and error states
 const products = useFetch("/api/products");
-const _searchQuery = useProductSearch();
+// Integrate view mode from preferences
+const preferences = usePreferences();
 </script>
 
 <template>
@@ -57,25 +58,47 @@ const _searchQuery = useProductSearch();
       </div>
     </div>
 
-    <!-- Products grid -->
-    <div
-      v-else-if="products.data.value?.length"
-      class="flex flex-wrap gap-8 space-y-8"
-    >
-      <NuxtLink
-        v-for="product in products.data.value"
-        :key="product.id"
-        :href="`/products/${product.slug}`"
-        class="flex-1 min-w-72 min-h-56 flex flex-col gap-4"
+    <!-- Products list/grid -->
+    <div v-else-if="products.data.value?.length">
+      <!-- List view -->
+      <div
+        v-if="preferences.state.value.view === 'list'"
+        class="space-y-4"
       >
-        <div>
-          <ImagePlaceholder />
-        </div>
-        <div class="flex align-top justify-between">
-          <div class="font-medium">{{ product.name }}</div>
+        <NuxtLink
+          v-for="product in products.data.value"
+          :key="product.id"
+          :href="`/products/${product.slug}`"
+          class="flex items-center gap-4 p-4 border-b rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        >
+          <div class="w-16 h-16">
+            <ImagePlaceholder />
+          </div>
+          <div class="flex-grow font-medium">{{ product.name }}</div>
           <div class="text-sm text-neutral-500">price</div>
-        </div>
-      </NuxtLink>
+        </NuxtLink>
+      </div>
+
+      <!-- Grid view -->
+      <div
+        v-else
+        class="flex flex-wrap gap-8"
+      >
+        <NuxtLink
+          v-for="product in products.data.value"
+          :key="product.id"
+          :href="`/products/${product.slug}`"
+          class="flex-1 min-w-72 min-h-56 flex flex-col gap-4"
+        >
+          <div>
+            <ImagePlaceholder />
+          </div>
+          <div class="flex align-top justify-between">
+            <div class="font-medium">{{ product.name }}</div>
+            <div class="text-sm text-neutral-500">price</div>
+          </div>
+        </NuxtLink>
+      </div>
     </div>
 
     <!-- Empty state -->
