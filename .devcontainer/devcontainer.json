@@ -3,7 +3,5 @@
   "service": "app",
   "forwardPorts": [5432],
   "workspaceFolder": "/workspaces",
-  "updateContentCommand": "bash -c 'npm i -g npm@latest'",
-  "postCreateCommand": "bash -c 'npm i -g bun'",
   "postStartCommand": "bash -c 'bun i'"
 }
