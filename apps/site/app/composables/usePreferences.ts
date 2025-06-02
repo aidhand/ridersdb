@@ -14,6 +14,7 @@ export const usePreferences = () => {
     region: "US",
   });
 
+  // Actions
   const setViewMode = (mode: "list" | "grid") => {
     state.value.view = mode;
   };
@@ -28,6 +29,8 @@ export const usePreferences = () => {
 
   return {
     state: readonly(state),
+
+    // Actions
     setViewMode,
     setCurrency,
     setRegion,
