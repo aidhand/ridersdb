@@ -2,14 +2,14 @@ import { useNodePg } from "@repo/db";
 import {
   brands,
   collections,
-  prices,
+  productVariants,
   products,
   retailers,
-  variants,
+  variantPrices,
 } from "@repo/db/schema";
 
-const { databaseUrl } = useRuntimeConfig();
-const db = useNodePg(databaseUrl);
+const { database } = useRuntimeConfig();
+const db = useNodePg(database.url);
 
 export default defineTask({
   meta: {
@@ -22,11 +22,11 @@ export default defineTask({
     await db.transaction(async (tx) => {
       try {
         // Delete in order to respect foreign key constraints
-        console.log("Deleting prices...");
-        await tx.delete(prices);
+        console.log("Deleting variant prices...");
+        await tx.delete(variantPrices);
 
-        console.log("Deleting variants...");
-        await tx.delete(variants);
+        console.log("Deleting product variants...");
+        await tx.delete(productVariants);
 
         console.log("Deleting products...");
         await tx.delete(products);

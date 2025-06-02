@@ -4,21 +4,17 @@
   "module": "./src/index.ts",
   "private": true,
   "exports": {
-    ".": {
-      "import": "./src/index.ts",
-      "require": "./src/index.ts"
-    },
-    "./utils": {
-      "import": "./src/utils/index.ts",
-      "require": "./src/utils/index.ts"
-    },
+    ".": "./src/index.ts",
+    "./utils": "./src/utils/index.ts",
     "./types": {
       "types": "./types/index.d.ts"
     }
   },
   "scripts": {
+    "biome": "biome check .",
+    "oxlint": "oxlint .",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "valibot": "^1.1.0"

@@ -5,6 +5,7 @@ import { db } from "~~/server/utils/db";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
+
   if (!body?.name || !body?.slug) {
     throw createError({
       statusCode: 400,

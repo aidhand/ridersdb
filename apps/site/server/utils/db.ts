@@ -1,4 +1,6 @@
 import { useNeon } from "@repo/db";
 
-const { databaseUrl } = useRuntimeConfig();
-export const db = useNeon(databaseUrl);
+export { and, eq, or, sql } from "drizzle-orm";
+
+const { database } = useRuntimeConfig();
+export const db = useNeon(database.url);

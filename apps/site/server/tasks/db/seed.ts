@@ -3,14 +3,14 @@ import { useNodePg } from "@repo/db";
 import {
   brands,
   collections,
-  prices,
+  productVariants,
   products,
   retailers,
-  variants,
+  variantPrices,
 } from "@repo/db/schema";
 
-const { databaseUrl } = useRuntimeConfig();
-const db = useNodePg(databaseUrl);
+const { database } = useRuntimeConfig();
+const db = useNodePg(database.url);
 
 export default defineTask({
   meta: {
@@ -42,12 +42,14 @@ export default defineTask({
     await db.transaction(async (tx) => {
       try {
         // Clear existing data (optional - uncomment if you want to clear before seeding)
-        // await tx.delete(prices);
-        // await tx.delete(variants);
+        // await tx.delete(variantPrices);
+        // await tx.delete(productVariants);
         // await tx.delete(products);
         // await tx.delete(retailers);
         // await tx.delete(collections);
-        // await tx.delete(brands);        // Seed brands
+        // await tx.delete(brands);
+
+        // Seed brands
         console.log("Creating brands...");
         const brandsData = Array.from({ length: counts.brands }, () => {
           const name = faker.company.name();
@@ -60,7 +62,9 @@ export default defineTask({
         const createdBrands = await tx
           .insert(brands)
           .values(brandsData)
-          .returning(); // Seed collections
+          .returning();
+
+        // Seed collections
         console.log("Creating collections...");
         const collectionsData = Array.from(
           { length: counts.collections },
@@ -81,7 +85,9 @@ export default defineTask({
         const createdCollections = await tx
           .insert(collections)
           .values(collectionsData)
-          .returning(); // Seed retailers
+          .returning();
+
+        // Seed retailers
         console.log("Creating retailers...");
         const retailersData = Array.from({ length: counts.retailers }, () => {
           const name = faker.company.name();
@@ -94,7 +100,9 @@ export default defineTask({
         const createdRetailers = await tx
           .insert(retailers)
           .values(retailersData)
-          .returning(); // Seed products
+          .returning();
+
+        // Seed products
         console.log("Creating products...");
         const productsData = Array.from({ length: counts.products }, () => {
           const name = faker.commerce.productName();
@@ -109,7 +117,9 @@ export default defineTask({
         const createdProducts = await tx
           .insert(products)
           .values(productsData)
-          .returning(); // Seed variants
+          .returning();
+
+        // Seed variants
         console.log("Creating product variants...");
         const variantsData = createdProducts.flatMap((product) =>
           Array.from({ length: counts.variantsPerProduct }, () => {
@@ -143,13 +153,16 @@ export default defineTask({
                 ),
               },
               product: product.id,
+              retailer: faker.helpers.arrayElement(createdRetailers).id,
             };
           })
         );
         const createdVariants = await tx
-          .insert(variants)
+          .insert(productVariants)
           .values(variantsData)
-          .returning(); // Seed prices
+          .returning();
+
+        // Seed prices
         console.log("Creating variant prices...");
         const pricesData = createdVariants.flatMap((variant) => {
           const selectedRetailers = faker.helpers.arrayElements(
@@ -161,11 +174,11 @@ export default defineTask({
           );
           return selectedRetailers.map((retailer) => ({
             price: faker.commerce.price({ min: 20, max: 500, dec: 2 }),
-            variant: variant.id,
+            productVariant: variant.id,
             retailer: retailer.id,
           }));
         });
-        await tx.insert(prices).values(pricesData);
+        await tx.insert(variantPrices).values(pricesData);
 
         console.log("✅ Database seeding completed successfully!");
         console.log(`Created:`);
