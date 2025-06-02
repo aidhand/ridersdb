@@ -32,6 +32,23 @@ RidersDB is a platform to search, compare, and find motorcycles, gear, and acces
 - `format`: Format codebase (Prettier)
 - `typecheck`: Type check all packages and apps
 
+## Linting & Code Quality
+
+This monorepo uses a modern, three-tier linting system:
+
+1. **Biome** - Fast formatting, import organization, and basic linting
+2. **Oxlint** - Ultra-fast TypeScript/JavaScript linting
+3. **ESLint** - Comprehensive framework-specific linting
+
+### Available Commands
+
+- `bun run lint:all` - Run complete pipeline: Biome → Oxlint → ESLint
+- `bun run lint:check` - Check all linters without auto-fixing
+- `bun run biome:fix` - Apply Biome fixes (formatting + basic linting)
+- `bun run oxlint:check` - Run Oxlint checks
+
+See [LINTING.md](./LINTING.md) for detailed setup information.
+
 ## TypeScript & Linting
 
 - Uses ESLint Flat Config with TypeScript support via `@typescript-eslint`.

@@ -1,7 +1,10 @@
 <script setup lang="ts">
-// SEO and page metadata
+definePageMeta({
+  middleware: "auth",
+});
+
 useSeoMeta({
-  title: "Settings - RideDB",
+  title: "Settings",
   description: "Manage your preferences and account settings.",
 });
 
@@ -9,12 +12,12 @@ useSeoMeta({
 const preferences = usePreferences();
 
 // Available items for dropdowns
-const viewModeitems = [
+const viewModeItems = [
   { label: "Grid View", value: "grid", icon: "i-tabler-grid-3x3" },
   { label: "List View", value: "list", icon: "i-tabler-list" },
 ];
 
-const currencyitems = [
+const currencyItems = [
   { label: "US Dollar (USD)", value: "USD" },
   { label: "Euro (EUR)", value: "EUR" },
   { label: "British Pound (GBP)", value: "GBP" },
@@ -23,7 +26,7 @@ const currencyitems = [
   { label: "Japanese Yen (JPY)", value: "JPY" },
 ];
 
-const regionitems = [
+const regionItems = [
   { label: "United States", value: "US" },
   { label: "United Kingdom", value: "UK" },
   { label: "Canada", value: "CA" },
@@ -33,6 +36,33 @@ const regionitems = [
   { label: "Japan", value: "JP" },
   { label: "Other", value: "OTHER" },
 ];
+
+// Form state and validation
+const isFormValid = ref(true);
+const formErrors = ref({ viewMode: "", currency: "", region: "" });
+
+const validateForm = () => {
+  let valid = true;
+  formErrors.value = { viewMode: "", currency: "", region: "" };
+
+  if (!preferences.state.value.view) {
+    formErrors.value.viewMode = "View mode is required";
+    valid = false;
+  }
+
+  if (!preferences.state.value.currency) {
+    formErrors.value.currency = "Currency is required";
+    valid = false;
+  }
+
+  if (!preferences.state.value.region) {
+    formErrors.value.region = "Region is required";
+    valid = false;
+  }
+
+  isFormValid.value = valid;
+  return valid;
+};
 
 // Computed properties for preferences
 const viewMode = computed({
@@ -64,12 +94,24 @@ const resetToDefaults = () => {
     color: "success",
   });
 };
+
+const saveSettings = () => {
+  if (validateForm()) {
+    // Save settings logic here
+    toast.add({
+      title: "Settings Saved",
+      description: "Your preferences have been saved successfully.",
+      icon: "i-tabler-check",
+      color: "success",
+    });
+  }
+};
 </script>
 
 <template>
-  <PageWrapper>
+  <BasePageWrapper>
     <!-- Page Header Navigation -->
-    <PageHeaderNav
+    <LayoutHeaderNav
       :breadcrumbs="[
         { label: 'User', icon: 'i-tabler-user' },
         { label: 'Settings' },
@@ -81,6 +123,13 @@ const resetToDefaults = () => {
           color: 'neutral',
           variant: 'outline',
           onClick: resetToDefaults,
+        },
+        {
+          label: 'Save Settings',
+          icon: 'i-tabler-device-floppy',
+          color: 'primary',
+          variant: 'solid',
+          onClick: saveSettings,
         },
       ]"
     />
@@ -126,42 +175,16 @@ const resetToDefaults = () => {
             label="Default View Mode"
             description="Choose how products and content are displayed by default"
             class="flex flex-col xs:flex-row justify-between gap-4"
+            :error="formErrors.viewMode"
           >
             <USelect
               v-model="viewMode"
-              :items="viewModeitems"
+              :items="viewModeItems"
               placeholder="Select view mode"
               value-attribute="value"
               option-attribute="label"
             />
           </UFormField>
-
-          <!-- Current Selection Preview -->
-          <div
-            class="p-4 bg-neutral-500/5 rounded-lg border border-neutral-500/10"
-          >
-            <div class="flex items-center gap-3">
-              <UIcon
-                :name="
-                  viewMode === 'grid' ? 'i-tabler-grid-3x3' : 'i-tabler-list'
-                "
-                class="text-primary-500"
-              />
-              <div>
-                <p class="font-medium text-neutral-900 dark:text-white">
-                  Current:
-                  {{ viewMode === "grid" ? "Grid View" : "List View" }}
-                </p>
-                <p class="text-sm text-neutral-500/70">
-                  {{
-                    viewMode === "grid" ?
-                      "Products displayed in a visual grid layout"
-                    : "Products displayed in a detailed list format"
-                  }}
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </UCard>
 
@@ -194,10 +217,11 @@ const resetToDefaults = () => {
             label="Currency"
             description="Choose your preferred currency for pricing display"
             class="flex flex-col xs:flex-row justify-between gap-4"
+            :error="formErrors.currency"
           >
             <USelect
               v-model="currency"
-              :items="currencyitems"
+              :items="currencyItems"
               placeholder="Select currency"
               value-attribute="value"
               option-attribute="label"
@@ -209,49 +233,16 @@ const resetToDefaults = () => {
             label="Region"
             description="Select your region for localized content and availability"
             class="flex flex-col xs:flex-row justify-between gap-4"
+            :error="formErrors.region"
           >
             <USelect
               v-model="region"
-              :items="regionitems"
+              :items="regionItems"
               placeholder="Select region"
               value-attribute="value"
               option-attribute="label"
             />
           </UFormField>
-
-          <!-- Localization Preview -->
-          <div
-            class="p-4 bg-neutral-500/5 rounded-lg border border-neutral-500/10"
-          >
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span
-                  class="text-sm font-medium text-neutral-700 dark:text-neutral-300"
-                >
-                  Currency:
-                </span>
-                <UBadge
-                  variant="soft"
-                  color="success"
-                >
-                  {{ currency }}
-                </UBadge>
-              </div>
-              <div class="flex items-center justify-between">
-                <span
-                  class="text-sm font-medium text-neutral-700 dark:text-neutral-300"
-                >
-                  Region:
-                </span>
-                <UBadge
-                  variant="soft"
-                  color="primary"
-                >
-                  {{ region }}
-                </UBadge>
-              </div>
-            </div>
-          </div>
         </div>
       </UCard>
 
@@ -393,5 +384,5 @@ const resetToDefaults = () => {
         </div>
       </UCard>
     </div>
-  </PageWrapper>
+  </BasePageWrapper>
 </template>

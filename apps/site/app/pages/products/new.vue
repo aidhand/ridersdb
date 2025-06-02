@@ -59,24 +59,25 @@ useSeoMeta({
 </script>
 
 <template>
-  <PageWrapper>
+  <BasePageWrapper>
     <!-- Page Header Navigation -->
-    <PageHeaderNav
+    <LayoutHeaderNav
       :breadcrumbs="[
         { label: 'Products', to: '/products', icon: 'i-tabler-package' },
         { label: 'Create New Product' },
       ]"
-      show-back-button
-      back-button-text="Back to Products"
-      back-button-to="/products"
-    />
+    >
+      <template #actions>
+        <BaseBackButton />
+      </template>
+    </LayoutHeaderNav>
 
     <!-- Page Header -->
     <ProductPageHeader>
       <template #title>Create New Product</template>
       <template #subtitle>Add a new product to your catalog</template>
       <template #actions>
-        <BackButton
+        <BaseBackButton
           text="Back to Products"
           to="/products"
         />
@@ -187,14 +188,14 @@ useSeoMeta({
             class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-white bg-primary-500 border border-primary-500 rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             @click="createProduct"
           >
-            <UIcon
+            <Icon
               v-if="isSubmitting"
-              name="tabler:loader-2"
+              name="lucide:loader-2"
               class="w-4 h-4 animate-spin"
             />
-            <UIcon
+            <Icon
               v-else
-              name="tabler:plus"
+              name="lucide:plus"
               class="w-4 h-4"
             />
             {{ isSubmitting ? "Creating..." : "Create Product" }}
@@ -268,5 +269,5 @@ useSeoMeta({
         </div>
       </div>
     </div>
-  </PageWrapper>
+  </BasePageWrapper>
 </template>

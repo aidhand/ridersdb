@@ -1,6 +1,16 @@
 <script setup lang="ts">
+import { reactive } from "vue";
+import AccountInfoCard from "~/components/user/dashboard/AccountInfoCard.vue";
+import PreferencesCard from "~/components/user/dashboard/PreferencesCard.vue";
+import RecentActivityCard from "~/components/user/dashboard/RecentActivityCard.vue";
+import RecentActivityList from "~/components/user/dashboard/RecentActivityList.vue";
+import WatchlistCard from "~/components/user/dashboard/WatchlistCard.vue";
+definePageMeta({
+  middleware: "auth",
+});
+
 useSeoMeta({
-  title: "User Dashboard - RideDB",
+  title: "User Dashboard",
   description:
     "Manage your account, preferences, and motorcycle gear collection.",
 });
@@ -8,17 +18,37 @@ useSeoMeta({
 const preferences = usePreferences();
 
 // Quick stats or user info could go here
-const userStats = {
+const userStats = reactive({
   watchlistItems: 12,
   recentlyViewed: 8,
   savedSearches: 3,
-};
+});
+
+// Use the real user session composable
+const { user: sessionUser } = useUserSession();
+
+// Recent activity (this would normally come from an API)
+const recentActivity = reactive([
+  { id: "1", date: "Yesterday", action: "Viewed", item: "Yamaha MT-07" },
+  {
+    id: "2",
+    date: "2 days ago",
+    action: "Added to Watchlist",
+    item: "Shoei RF-1200 Helmet",
+  },
+  {
+    id: "3",
+    date: "1 week ago",
+    action: "Purchased",
+    item: "Alpinestars SMX-1R Boots",
+  },
+]);
 </script>
 
 <template>
-  <PageWrapper>
+  <BasePageWrapper>
     <!-- Page Header Navigation -->
-    <PageHeaderNav
+    <LayoutHeaderNav
       :breadcrumbs="[
         { label: 'User', icon: 'i-tabler-user' },
         { label: 'Dashboard' },
@@ -35,232 +65,74 @@ const userStats = {
       </p>
     </div>
 
-    <!-- Quick Actions Grid -->
-    <div class="space-y-8">
-      <!-- Main Actions -->
-      <BaseGrid
-        cols="1 md:2 lg:3"
-        gap="6"
-      >
-        <!-- Settings Card -->
-        <UCard class="group hover:shadow-lg transition-shadow">
-          <template #header>
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-primary-500/10 rounded-lg">
-                <UIcon
-                  name="i-tabler-settings"
-                  class="text-lg text-primary-500"
-                />
-              </div>
-              <div>
-                <h3 class="font-semibold text-neutral-900 dark:text-white">
-                  Settings
-                </h3>
-                <p class="text-sm text-neutral-500/70">Preferences & account</p>
-              </div>
-            </div>
-          </template>
+    <!-- Quick Actions at the Top -->
+    <UCard class="mb-8">
+      <template #header>
+        <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">
+          Quick Actions
+        </h2>
+      </template>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <UButton
+          to="/products"
+          variant="outline"
+          color="neutral"
+          icon="i-tabler-search"
+          class="justify-start"
+        >
+          Browse Products
+        </UButton>
+        <UButton
+          to="/products/new"
+          variant="outline"
+          color="neutral"
+          icon="i-tabler-plus"
+          class="justify-start"
+        >
+          Add Product
+        </UButton>
+        <UButton
+          to="/user/settings"
+          variant="outline"
+          color="neutral"
+          icon="i-tabler-settings"
+          class="justify-start"
+        >
+          Settings
+        </UButton>
+        <UButton
+          variant="outline"
+          color="neutral"
+          icon="i-tabler-help"
+          class="justify-start"
+        >
+          Help & Support
+        </UButton>
+      </div>
+    </UCard>
 
-          <div class="space-y-4">
-            <p class="text-neutral-600 dark:text-neutral-400">
-              Customize your experience and manage your preferences.
-            </p>
+    <!-- Main Content: Two Columns -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="space-y-8">
+        <!-- Account Information Card -->
+        <AccountInfoCard :user="sessionUser || {}" />
 
-            <!-- Current Preferences Preview -->
-            <div class="space-y-2">
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-neutral-500/70">View Mode:</span>
-                <UBadge
-                  variant="soft"
-                  color="primary"
-                >
-                  {{
-                    preferences.state.value.view === "grid" ? "Grid" : "List"
-                  }}
-                </UBadge>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-neutral-500/70">Currency:</span>
-                <UBadge
-                  variant="soft"
-                  color="success"
-                >
-                  {{ preferences.state.value.currency }}
-                </UBadge>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-neutral-500/70">Region:</span>
-                <UBadge
-                  variant="soft"
-                  color="secondary"
-                >
-                  {{ preferences.state.value.region }}
-                </UBadge>
-              </div>
-            </div>
-          </div>
-
-          <template #footer>
-            <UButton
-              to="/user/settings"
-              variant="solid"
-              color="primary"
-              icon="i-tabler-settings"
-              class="w-full"
-            >
-              Manage Settings
-            </UButton>
-          </template>
-        </UCard>
-
+        <!-- Preferences Card -->
+        <PreferencesCard :preferences="preferences" />
+      </div>
+      <div class="space-y-8">
         <!-- Watchlist Card -->
-        <UCard class="group hover:shadow-lg transition-shadow">
-          <template #header>
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-green-500/10 rounded-lg">
-                <UIcon
-                  name="i-tabler-list-check"
-                  class="text-lg text-green-500"
-                />
-              </div>
-              <div>
-                <h3 class="font-semibold text-neutral-900 dark:text-white">
-                  Watchlist
-                </h3>
-                <p class="text-sm text-neutral-500/70">Saved items</p>
-              </div>
-            </div>
-          </template>
-
-          <div class="space-y-4">
-            <p class="text-neutral-600 dark:text-neutral-400">
-              Keep track of products you're interested in.
-            </p>
-
-            <div class="text-center py-4">
-              <div class="text-2xl font-bold text-neutral-900 dark:text-white">
-                {{ userStats.watchlistItems }}
-              </div>
-              <div class="text-sm text-neutral-500/70">Items in watchlist</div>
-            </div>
-          </div>
-
-          <template #footer>
-            <UButton
-              to="/watchlist"
-              variant="outline"
-              color="success"
-              icon="i-tabler-list-check"
-              class="w-full"
-            >
-              View Watchlist
-            </UButton>
-          </template>
-        </UCard>
+        <WatchlistCard :watchlist-items="userStats.watchlistItems" />
 
         <!-- Recent Activity Card -->
-        <UCard class="group hover:shadow-lg transition-shadow">
-          <template #header>
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-blue-500/10 rounded-lg">
-                <UIcon
-                  name="i-tabler-clock"
-                  class="text-lg text-blue-500"
-                />
-              </div>
-              <div>
-                <h3 class="font-semibold text-neutral-900 dark:text-white">
-                  Recent Activity
-                </h3>
-                <p class="text-sm text-neutral-500/70">Your browsing history</p>
-              </div>
-            </div>
-          </template>
+        <RecentActivityCard
+          :recently-viewed="userStats.recentlyViewed"
+          :saved-searches="userStats.savedSearches"
+        />
 
-          <div class="space-y-4">
-            <p class="text-neutral-600 dark:text-neutral-400">
-              Quick access to recently viewed items.
-            </p>
-
-            <div class="grid grid-cols-2 gap-4 text-center">
-              <div>
-                <div class="text-xl font-bold text-neutral-900 dark:text-white">
-                  {{ userStats.recentlyViewed }}
-                </div>
-                <div class="text-xs text-neutral-500/70">Recently Viewed</div>
-              </div>
-              <div>
-                <div class="text-xl font-bold text-neutral-900 dark:text-white">
-                  {{ userStats.savedSearches }}
-                </div>
-                <div class="text-xs text-neutral-500/70">Saved Searches</div>
-              </div>
-            </div>
-          </div>
-
-          <template #footer>
-            <UButton
-              to="/user/activity"
-              variant="outline"
-              color="info"
-              icon="i-tabler-clock"
-              class="w-full"
-            >
-              View Activity
-            </UButton>
-          </template>
-        </UCard>
-      </BaseGrid>
-
-      <!-- Quick Actions -->
-      <UCard>
-        <template #header>
-          <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">
-            Quick Actions
-          </h2>
-        </template>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <UButton
-            to="/products"
-            variant="outline"
-            color="neutral"
-            icon="i-tabler-search"
-            class="justify-start"
-          >
-            Browse Products
-          </UButton>
-
-          <UButton
-            to="/products/new"
-            variant="outline"
-            color="neutral"
-            icon="i-tabler-plus"
-            class="justify-start"
-          >
-            Add Product
-          </UButton>
-
-          <UButton
-            to="/user/settings"
-            variant="outline"
-            color="neutral"
-            icon="i-tabler-settings"
-            class="justify-start"
-          >
-            Settings
-          </UButton>
-
-          <UButton
-            variant="outline"
-            color="neutral"
-            icon="i-tabler-help"
-            class="justify-start"
-          >
-            Help & Support
-          </UButton>
-        </div>
-      </UCard>
+        <!-- Recent Activity List -->
+        <RecentActivityList :recent-activity="recentActivity" />
+      </div>
     </div>
-  </PageWrapper>
+  </BasePageWrapper>
 </template>

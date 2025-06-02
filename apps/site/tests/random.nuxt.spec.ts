@@ -1,5 +1,5 @@
-import { $fetch, isDev, setup } from "@nuxt/test-utils";
 import { fileURLToPath } from "node:url";
+import { $fetch, isDev, setup } from "@nuxt/test-utils";
 import { describe, expect, it } from "vitest";
 
 console.log(import.meta.url);

@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui";
 
+const { loggedIn, user, clear } = useUserSession();
+
 const userItems: DropdownMenuItem[] = [
+  {
+    label: "Dashboard",
+    icon: "i-tabler-dashboard",
+    to: "/user",
+  },
   {
     label: "Settings",
     icon: "i-tabler-settings",
@@ -10,23 +17,19 @@ const userItems: DropdownMenuItem[] = [
   {
     label: "Watchlist",
     icon: "i-tabler-list-check",
-    to: "/watchlist",
-  },
-  {
-    label: "Login",
-    icon: "i-tabler-login",
-    to: "/login",
+    to: "/user/watchlist",
   },
   {
     label: "Logout",
     icon: "i-tabler-logout",
-    to: "/logout",
+    onSelect: clear,
   },
 ];
 </script>
 
 <template>
   <UDropdownMenu
+    v-if="loggedIn"
     :items="userItems"
     :ui="{
       content: 'w-32',
@@ -38,7 +41,19 @@ const userItems: DropdownMenuItem[] = [
       variant="outline"
       aria-label="User menu"
       size="md"
-      >User</UButton
     >
+      {{ user?.name }}
+    </UButton>
   </UDropdownMenu>
+
+  <UButton
+    v-else
+    icon="i-tabler-login"
+    color="neutral"
+    variant="outline"
+    aria-label="User menu"
+    size="md"
+    to="/auth/login"
+    >Login</UButton
+  >
 </template>

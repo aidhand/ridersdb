@@ -7,17 +7,23 @@
     "access": "public"
   },
   "scripts": {
-    "lint": "eslint ."
+    "biome": "biome check .",
+    "oxlint": "oxlint .",
+    "lint": "eslint . --fix"
   },
   "exports": {
     "./eslint.config.mjs": "./eslint.config.mjs",
     "./tsconfig.base.json": "./tsconfig.base.json"
   },
-  "devDependencies": {
+  "dependencies": {
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-config-turbo": "^2.5.3"
+  },
+  "peerDependencies": {
+    "eslint": "^9",
+    "typescript": "^5"
   }
 }

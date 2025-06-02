@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // ECMAScript settings
     "lib": ["ESNext"],
     "target": "ESNext",
     "module": "ESNext",
@@ -8,10 +7,8 @@
     "moduleDetection": "force",
     "jsx": "react-jsx",
 
-    // Interop and module compatibility
     "esModuleInterop": true,
 
-    // Strictness and type safety (all enabled for maximum strictness)
     "strict": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
@@ -21,7 +18,6 @@
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true,
 
-    // Emit and build
     "noEmit": true
   },
 

@@ -1,25 +1,15 @@
+import { defineNuxtConfig } from "nuxt/config";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
-  imports: {
-    dirs: ["stores"],
-  },
+  typescript: { typeCheck: true },
+  eslint: { checker: true },
 
   future: {
     compatibilityVersion: 4,
   },
-
-  // experimental: {
-  //   asyncContext: true,
-  //   asyncEntry: true,
-  //   clientFallback: true,
-  //   componentIslands: true,
-  //   renderJsonPayloads: true,
-  //   lazyHydration: true,
-  //   sharedPrerenderData: true,
-  //   typedPages: true,
-  // },
 
   nitro: {
     preset: "bun",
@@ -30,8 +20,44 @@ export default defineNuxtConfig({
     },
   },
 
+  imports: {
+    dirs: ["stores"],
+  },
+
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@nuxt/icon",
+    "@nuxt/image",
+    "@nuxt/ui",
+    "@nuxt/test-utils/module",
+    "nuxt-auth-utils",
+  ],
+
+  fonts: {
+    defaults: {
+      weights: ["100 900"],
+      subsets: ["latin", "latin-ext"],
+    },
+  },
+
+  css: ["~/assets/css/main.css"],
+
   runtimeConfig: {
-    databaseUrl: "",
+    session: {
+      password: "",
+    },
+
+    oauth: {
+      github: {
+        clientId: "",
+        clientSecret: "",
+      },
+    },
+
+    database: {
+      url: "",
+    },
 
     api: {
       baseUrl: "/api",
@@ -43,21 +69,4 @@ export default defineNuxtConfig({
 
     public: {},
   },
-  modules: [
-    "@nuxt/eslint",
-    "@nuxt/fonts",
-    "@nuxt/icon",
-    "@nuxt/image",
-    "@nuxt/test-utils/module",
-    "@nuxt/ui",
-    "@pinia/nuxt",
-    "pinia-plugin-persistedstate/nuxt",
-  ],
-  fonts: {
-    defaults: {
-      weights: ["100 900"],
-      subsets: ["latin", "latin-ext"],
-    },
-  },
-  css: ["~/assets/css/main.css"],
 });

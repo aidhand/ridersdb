@@ -7,7 +7,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <PageWrapper>
+  <BasePageWrapper>
     <NuxtRouteAnnouncer />
 
     <!-- Hero Section -->
@@ -151,10 +151,10 @@ useSeoMeta({
         </UButton>
       </div>
 
-      <ProductsList
+      <ProductList
         :columns="'1 sm:2 lg:3'"
         card-variant="subtle"
       />
     </section>
-  </PageWrapper>
+  </BasePageWrapper>
 </template>

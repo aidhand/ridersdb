@@ -9,9 +9,9 @@ useSeoMeta({
 </script>
 
 <template>
-  <PageWrapper>
+  <BasePageWrapper>
     <!-- Page Header Navigation -->
-    <PageHeaderNav
+    <LayoutHeaderNav
       :breadcrumbs="[{ label: 'Products', icon: 'i-tabler-package' }]"
       ><template #actions>
         <UButton
@@ -23,7 +23,7 @@ useSeoMeta({
           Add Product
         </UButton>
       </template>
-    </PageHeaderNav>
+    </LayoutHeaderNav>
 
     <!-- Page Header -->
     <ProductPageHeader>
@@ -41,6 +41,6 @@ useSeoMeta({
     </ProductPageHeader>
 
     <!-- Products List -->
-    <ProductsList />
-  </PageWrapper>
+    <ProductList />
+  </BasePageWrapper>
 </template>

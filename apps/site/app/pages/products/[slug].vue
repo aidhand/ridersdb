@@ -6,11 +6,53 @@ import type {
   Variant,
 } from "@repo/validation/types";
 
+interface EnhancedVariant extends Variant {
+  latestPrice?: {
+    amount: number;
+    retailer: {
+      id: string;
+      slug: string;
+      name: string;
+      url: string;
+      createdAt: Date;
+      updatedAt: Date;
+    };
+    updatedAt: Date;
+  } | null;
+  allPrices?: Array<{
+    amount: number;
+    retailer: {
+      id: string;
+      slug: string;
+      name: string;
+      url: string;
+      createdAt: Date;
+      updatedAt: Date;
+    };
+    updatedAt: Date;
+  }>;
+  priceRange?: {
+    min: number | null;
+    max: number | null;
+  };
+  availability?: {
+    inStock: boolean;
+    retailerCount: number;
+    retailers: Array<{
+      name: string;
+      slug: string;
+      url: string;
+      price: number;
+      lastUpdated: Date;
+    }>;
+  };
+}
+
 // Define enhanced product type with brand and collection details
 interface EnhancedProduct extends Product {
   brandDetails?: Brand;
   collectionDetails?: Collection;
-  variants?: Variant[];
+  variants?: EnhancedVariant[];
 }
 
 // Get route params
@@ -27,26 +69,67 @@ const {
 // Set SEO meta
 useSeoMeta({
   title: () =>
-    product.value?.name ?
-      `${product.value.name} - RidersDB`
-    : "Product Details - RidersDB",
+    product.value?.name
+      ? `${product.value.name} - RidersDB`
+      : "Product Details - RidersDB",
   description: () =>
     product.value?.description ||
     "View detailed information about this motorcycle gear product.",
 });
+
+// Helper functions for pricing and availability
+const getPriceRange = (variants: EnhancedVariant[]) => {
+  const allPrices: number[] = [];
+  variants.forEach((variant) => {
+    if (
+      variant.priceRange?.min !== null &&
+      variant.priceRange?.min !== undefined
+    ) {
+      allPrices.push(variant.priceRange.min);
+    }
+    if (
+      variant.priceRange?.max !== null &&
+      variant.priceRange?.max !== undefined &&
+      variant.priceRange.max !== variant.priceRange.min
+    ) {
+      allPrices.push(variant.priceRange.max);
+    }
+  });
+
+  if (allPrices.length === 0) return null;
+
+  return {
+    min: Math.min(...allPrices),
+    max: Math.max(...allPrices),
+  };
+};
+
+const getAvailableVariantsCount = (variants: EnhancedVariant[]) => {
+  return variants.filter((variant) => variant.availability?.inStock).length;
+};
+
+const getTotalRetailersCount = (variants: EnhancedVariant[]) => {
+  const allRetailers = new Set<string>();
+  variants.forEach((variant) => {
+    variant.availability?.retailers?.forEach((retailer) => {
+      allRetailers.add(retailer.slug);
+    });
+  });
+  return allRetailers.size;
+};
 </script>
 
 <template>
-  <PageWrapper>
+  <BasePageWrapper>
     <!-- Page Header Navigation -->
-    <PageHeaderNav
+    <LayoutHeaderNav
       :breadcrumbs="[
         { label: 'Products', to: '/products', icon: 'i-tabler-package' },
         { label: product?.name || 'Product Details' },
       ]"
     >
       <template #actions>
-        <BackButton />
+        <BaseBackButton />
         <UButton
           icon="i-tabler-heart"
           color="neutral"
@@ -63,40 +146,26 @@ useSeoMeta({
           Edit
         </UButton>
       </template>
-    </PageHeaderNav>
+    </LayoutHeaderNav>
     <!-- Loading State -->
-    <div
+    <BaseLoadingState
       v-if="pending"
-      class="flex flex-col items-center justify-center py-20 text-center"
-    >
-      <UIcon
-        name="tabler:loader-2"
-        class="w-10 h-10 animate-spin text-primary-500/70 mb-4"
-      />
-      <p class="text-lg">Loading product details...</p>
-    </div>
+      title="Loading product details..."
+      description="Please wait while we fetch the product information"
+    />
 
     <!-- Error State -->
-    <div
+    <BaseErrorState
       v-else-if="error"
-      class="flex flex-col items-center justify-center py-20 text-center bg-red-500/10 border border-red-500/20 rounded-lg"
-    >
-      <UIcon
-        name="tabler:alert-triangle"
-        class="w-10 h-10 text-red-500 mb-4"
-      />
-      <h3 class="text-xl font-semibold text-red-600 mb-2">
-        Failed to load product
-      </h3>
-      <p class="text-red-500/70 mb-6">{{ error }}</p>
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-neutral-500/10 border border-neutral-500/20 rounded-lg hover:bg-neutral-500/20 transition-colors"
-        @click="$router.push('/products')"
-      >
-        Return to Products
-      </button>
-    </div>
+      title="Failed to load product"
+      :message="
+        typeof error === 'string' ? error : (
+          'An error occurred while loading the product details.'
+        )
+      "
+      action-text="Return to Products"
+      @action="$router.push('/products')"
+    />
     <!-- Product Content -->
     <div
       v-else-if="product"
@@ -221,6 +290,85 @@ useSeoMeta({
             </div>
           </BaseGrid>
 
+          <!-- Pricing Summary -->
+          <div
+            v-if="product.variants && product.variants.length > 0"
+            class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg"
+          >
+            <div class="border-b border-neutral-500/20 p-4">
+              <div class="flex items-center gap-2">
+                <Icon
+                  name="tabler:currency-dollar"
+                  class="w-5 h-5"
+                />
+                <h3 class="text-lg font-semibold">Pricing & Availability</h3>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- Overall Price Range -->
+                <div class="space-y-2">
+                  <p class="text-sm font-medium">Price Range</p>
+                  <div class="space-y-1">
+                    <template v-if="getPriceRange(product.variants)">
+                      <p class="text-lg font-bold text-green-600">
+                        ${{
+                          getPriceRange(product.variants)?.min?.toFixed(2)
+                        }}
+                        - ${{
+                          getPriceRange(product.variants)?.max?.toFixed(2)
+                        }}
+                      </p>
+                    </template>
+                    <template v-else>
+                      <p class="text-gray-500">No pricing data</p>
+                    </template>
+                  </div>
+                </div>
+
+                <!-- Availability Status -->
+                <div class="space-y-2">
+                  <p class="text-sm font-medium">Availability</p>
+                  <div class="space-y-1">
+                    <p class="text-sm">
+                      {{ getAvailableVariantsCount(product.variants) }} of
+                      {{ product.variants.length }} variants in stock
+                    </p>
+                    <div class="flex items-center gap-2">
+                      <div
+                        :class="
+                          getAvailableVariantsCount(product.variants) > 0 ?
+                            'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                        "
+                        class="px-2 py-1 rounded-full text-xs font-medium"
+                      >
+                        {{
+                          getAvailableVariantsCount(product.variants) > 0 ?
+                            "Available"
+                          : "Out of Stock"
+                        }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Retailer Count -->
+                <div class="space-y-2">
+                  <p class="text-sm font-medium">Retailers</p>
+                  <div class="space-y-1">
+                    <p class="text-lg font-bold">
+                      {{ getTotalRetailersCount(product.variants) }}
+                    </p>
+                    <p class="text-sm text-gray-500">
+                      retailers offering this product
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Product Metadata -->
           <div class="bg-neutral-500/5 border border-neutral-500/20 rounded-lg">
             <div class="border-b border-neutral-500/20 p-4">
@@ -295,7 +443,7 @@ useSeoMeta({
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
                   >
-                    SKU
+                    Variant
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
@@ -310,7 +458,17 @@ useSeoMeta({
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
                   >
-                    Material
+                    Price Range
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                  >
+                    Availability
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                  >
+                    Retailers
                   </th>
                 </tr>
               </thead>
@@ -320,7 +478,14 @@ useSeoMeta({
                   :key="variant.id"
                   class="hover:bg-neutral-500/5 transition-colors"
                 >
-                  <td class="px-4 py-3 text-sm font-medium">sku</td>
+                  <td class="px-4 py-3 text-sm">
+                    <div class="space-y-1">
+                      <p class="font-medium">{{ variant.name }}</p>
+                      <p class="text-xs text-gray-500 font-mono">
+                        {{ variant.slug }}
+                      </p>
+                    </div>
+                  </td>
                   <td class="px-4 py-3 text-sm">
                     <span
                       v-if="variant.size"
@@ -344,7 +509,97 @@ useSeoMeta({
                     </div>
                     <span v-else>—</span>
                   </td>
-                  <td class="px-4 py-3 text-sm">material</td>
+                  <td class="px-4 py-3 text-sm">
+                    <div
+                      v-if="
+                        variant.priceRange &&
+                        (variant.priceRange.min || variant.priceRange.max)
+                      "
+                    >
+                      <div
+                        v-if="variant.priceRange.min === variant.priceRange.max"
+                        class="font-medium"
+                      >
+                        ${{ variant.priceRange.min?.toFixed(2) }}
+                      </div>
+                      <div
+                        v-else
+                        class="font-medium"
+                      >
+                        ${{ variant.priceRange.min?.toFixed(2) }} - ${{
+                          variant.priceRange.max?.toFixed(2)
+                        }}
+                      </div>
+                      <div
+                        v-if="variant.latestPrice"
+                        class="text-xs text-gray-500"
+                      >
+                        Latest: ${{ variant.latestPrice.amount.toFixed(2) }}
+                      </div>
+                    </div>
+                    <div
+                      v-else
+                      class="text-gray-500"
+                    >
+                      No pricing data
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-sm">
+                    <div v-if="variant.availability">
+                      <div class="flex items-center gap-2">
+                        <div
+                          :class="
+                            variant.availability.inStock ?
+                              'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                          "
+                          class="px-2 py-1 rounded-full text-xs font-medium"
+                        >
+                          {{
+                            variant.availability.inStock ?
+                              "In Stock"
+                            : "Out of Stock"
+                          }}
+                        </div>
+                      </div>
+                      <div
+                        v-if="variant.availability.inStock"
+                        class="text-xs text-gray-500 mt-1"
+                      >
+                        {{ variant.availability.retailerCount }}
+                        {{
+                          variant.availability.retailerCount === 1 ?
+                            "retailer"
+                          : "retailers"
+                        }}
+                      </div>
+                    </div>
+                    <div
+                      v-else
+                      class="text-gray-500"
+                    >
+                      Unknown
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-sm">
+                    <div
+                      v-if="
+                        variant.availability &&
+                        variant.availability.retailers.length > 0
+                      "
+                    >
+                      <ProductPricing
+                        :retailers="variant.availability.retailers"
+                        :variant-name="variant.name"
+                      />
+                    </div>
+                    <div
+                      v-else
+                      class="text-gray-500"
+                    >
+                      None available
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -415,5 +670,5 @@ useSeoMeta({
         </button>
       </div>
     </div>
-  </PageWrapper>
+  </BasePageWrapper>
 </template>

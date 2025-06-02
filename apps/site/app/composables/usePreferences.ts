@@ -1,19 +1,18 @@
 import { useLocalStorage } from "@vueuse/core";
 import { readonly } from "vue";
 
+export interface PreferencesState {
+  view: "grid" | "list";
+  currency: string;
+  region: string;
+}
+
 export const usePreferences = () => {
-  const localStorage = useLocalStorage("preferences", {
+  const state = useLocalStorage<PreferencesState>("preferences", {
     view: "grid",
     currency: "USD",
     region: "US",
   });
-
-  const state = useState("preferences", () => localStorage);
-
-  //   watch(state, (newValue) => {
-  //     // This will run whenever the state changes
-  //     useLocalStorage("preferences", newValue);
-  //   });
 
   const setViewMode = (mode: "list" | "grid") => {
     state.value.view = mode;

@@ -5,10 +5,10 @@
 
     <!-- Main Content -->
     <main
-      class="flex-1 bg-neutral-400/4"
+      class="flex flex-col flex-1 bg-neutral-400/4"
       aria-label="Main content"
     >
-      <BaseContainer>
+      <BaseContainer class="flex flex-col flex-1">
         <slot />
       </BaseContainer>
     </main>
