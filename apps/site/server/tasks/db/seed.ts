@@ -1,16 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { useNodePg } from "@repo/db";
-import {
-  brands,
-  collections,
-  productVariants,
-  products,
-  retailers,
-  variantPrices,
-} from "@repo/db/schema";
-
-const { database } = useRuntimeConfig();
-const db = useNodePg(database.url);
+import { generateUniqueSlug } from "~~/server/utils/strings";
 
 export default defineTask({
   meta: {
@@ -21,179 +10,157 @@ export default defineTask({
     const counts = {
       brands: (payload?.brands as number) || 12,
       collections: (payload?.collections as number) || 24,
+      categories: (payload?.categories as number) || 8,
       retailers: (payload?.retailers as number) || 6,
       products: (payload?.products as number) || 60,
       variantsPerProduct: (payload?.variantsPerProduct as number) || 4,
-      pricesPerVariant: (payload?.pricesPerVariant as number) || 48,
+      pricesPerVariant: (payload?.pricesPerVariant as number) || 3,
     };
 
     console.log("🌱 Starting database seeding...");
     console.log(
-      `Targeting: ${counts.brands} brands, ${counts.collections} collections, ${counts.retailers} retailers, ${counts.products} products`
+      `Targeting: ${counts.brands} brands, ${counts.collections} collections, ${counts.categories} categories, ${counts.retailers} retailers, ${counts.products} products`
     );
 
-    // Initialize slug tracking sets
+    // Initialize slug tracking sets (no longer mutated by generateUniqueSlug)
     const usedBrandSlugs = new Set<string>();
-    const usedCollectionSlugs = new Set<string>();
+    const usedCategorySlugs = new Set<string>();
     const usedRetailerSlugs = new Set<string>();
     const usedProductSlugs = new Set<string>();
     const usedVariantSlugs = new Set<string>();
 
-    await db.transaction(async (tx) => {
+    // Helper function for seeding logic
+    async function runSeed(dbOrTx) {
+      // Seed brands
+      console.log("Creating brands...");
+      const brandsData = Array.from({ length: counts.brands }, () => {
+        const name = faker.company.name();
+        const slug = generateUniqueSlug(name, usedBrandSlugs);
+        usedBrandSlugs.add(slug);
+        return {
+          slug,
+          name,
+          description: faker.company.catchPhrase(),
+        };
+      });
+      const createdBrands = await dbOrTx
+        .insert(brands)
+        .values(brandsData)
+        .returning();
+
+      // Seed product categories
+      console.log("Creating product categories...");
+      const categoriesData = Array.from({ length: counts.categories }, () => {
+        const name = faker.commerce.department();
+        const slug = generateUniqueSlug(name, usedCategorySlugs);
+        usedCategorySlugs.add(slug);
+        return {
+          slug,
+          name,
+          description: faker.lorem.sentence(),
+        };
+      });
+      const createdCategories = await dbOrTx
+        .insert(productCategories)
+        .values(categoriesData)
+        .returning();
+
+      // Seed retailers
+      console.log("Creating retailers...");
+      const retailersData = Array.from({ length: counts.retailers }, () => {
+        const name = faker.company.name();
+        const slug = generateUniqueSlug(name, usedRetailerSlugs);
+        usedRetailerSlugs.add(slug);
+        return {
+          slug,
+          name,
+          description: faker.company.catchPhrase(),
+          website: faker.internet.url(),
+        };
+      });
+      const createdRetailers = await dbOrTx
+        .insert(retailers)
+        .values(retailersData)
+        .returning();
+
+      // Seed products
+      console.log("Creating products...");
+      const productsData = Array.from({ length: counts.products }, () => {
+        const name = faker.commerce.productName();
+        const slug = generateUniqueSlug(name, usedProductSlugs);
+        usedProductSlugs.add(slug);
+        return {
+          slug,
+          name,
+          description: faker.commerce.productDescription(),
+          brandId: faker.helpers.arrayElement(createdBrands).id,
+          categoryId: faker.helpers.arrayElement(createdCategories).id,
+        };
+      });
+      const createdProducts = await dbOrTx
+        .insert(products)
+        .values(productsData)
+        .returning();
+
+      // Seed product variants
+      console.log("Creating product variants...");
+      const variantsData = createdProducts.flatMap((product) =>
+        Array.from({ length: counts.variantsPerProduct }, () => {
+          const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
+
+          const sku = faker.string.alphanumeric(10).toUpperCase();
+          const size = faker.helpers.arrayElement(sizes);
+          const color = faker.color.human();
+
+          const variantName = `${product.name} - ${color} ${size}`;
+
+          const slug = generateUniqueSlug(variantName, usedVariantSlugs);
+          usedVariantSlugs.add(slug);
+
+          return {
+            slug,
+            name: variantName,
+            description: faker.lorem.sentence(),
+
+            sku,
+            size,
+            color,
+
+            productId: product.id,
+          };
+        })
+      );
+      const createdVariants = await dbOrTx
+        .insert(productVariants)
+        .values(variantsData)
+        .returning();
+
+      console.log("✅ Database seeding completed successfully!");
+      console.log(`Created:`);
+      console.log(`  - ${createdBrands.length} brands`);
+      console.log(`  - ${createdCategories.length} categories`);
+      console.log(`  - ${createdRetailers.length} retailers`);
+      console.log(`  - ${createdProducts.length} products`);
+      console.log(`  - ${createdVariants.length} variants`);
+    }
+
+    try {
       try {
-        // Clear existing data (optional - uncomment if you want to clear before seeding)
-        // await tx.delete(variantPrices);
-        // await tx.delete(productVariants);
-        // await tx.delete(products);
-        // await tx.delete(retailers);
-        // await tx.delete(collections);
-        // await tx.delete(brands);
-
-        // Seed brands
-        console.log("Creating brands...");
-        const brandsData = Array.from({ length: counts.brands }, () => {
-          const name = faker.company.name();
-          return {
-            slug: generateUniqueSlug(name, usedBrandSlugs),
-            name,
-            description: faker.company.catchPhrase(),
-          };
+        // Attempt to use a transaction
+        await db.transaction(async (tx) => {
+          await runSeed(tx);
         });
-        const createdBrands = await tx
-          .insert(brands)
-          .values(brandsData)
-          .returning();
-
-        // Seed collections
-        console.log("Creating collections...");
-        const collectionsData = Array.from(
-          { length: counts.collections },
-          () => {
-            const name = `${faker.word.adjective()} ${faker.word.noun()}`;
-            const collectionName = faker.helpers.fake(
-              "{{word.adjective}} {{word.noun}}"
-            );
-            return {
-              slug: generateUniqueSlug(name, usedCollectionSlugs),
-              name:
-                collectionName.charAt(0).toUpperCase() +
-                collectionName.slice(1),
-              description: faker.lorem.sentence(),
-            };
-          }
+      } catch (txError) {
+        console.warn(
+          "⚠️ Transaction failed, falling back to non-transactional seed:",
+          txError
         );
-        const createdCollections = await tx
-          .insert(collections)
-          .values(collectionsData)
-          .returning();
-
-        // Seed retailers
-        console.log("Creating retailers...");
-        const retailersData = Array.from({ length: counts.retailers }, () => {
-          const name = faker.company.name();
-          return {
-            slug: generateUniqueSlug(name, usedRetailerSlugs),
-            name,
-            url: faker.internet.url(),
-          };
-        });
-        const createdRetailers = await tx
-          .insert(retailers)
-          .values(retailersData)
-          .returning();
-
-        // Seed products
-        console.log("Creating products...");
-        const productsData = Array.from({ length: counts.products }, () => {
-          const name = faker.commerce.productName();
-          return {
-            slug: generateUniqueSlug(name, usedProductSlugs),
-            name,
-            description: faker.commerce.productDescription(),
-            brand: faker.helpers.arrayElement(createdBrands).id,
-            collection: faker.helpers.arrayElement(createdCollections).id,
-          };
-        });
-        const createdProducts = await tx
-          .insert(products)
-          .values(productsData)
-          .returning();
-
-        // Seed variants
-        console.log("Creating product variants...");
-        const variantsData = createdProducts.flatMap((product) =>
-          Array.from({ length: counts.variantsPerProduct }, () => {
-            const size = faker.helpers.arrayElement([
-              "XS",
-              "S",
-              "M",
-              "L",
-              "XL",
-              "XXL",
-            ]);
-            const color = faker.color.human();
-            const variantName = `${product.name} - ${color} ${size}`;
-            return {
-              slug: generateUniqueSlug(variantName, usedVariantSlugs),
-              name: variantName,
-              size,
-              color,
-              metadata: {
-                material: faker.commerce.productMaterial(),
-                weight: `${faker.number.float({ min: 0.1, max: 5.0, fractionDigits: 1 })} kg`,
-                features: faker.helpers.arrayElements(
-                  [
-                    "waterproof",
-                    "breathable",
-                    "lightweight",
-                    "durable",
-                    "eco-friendly",
-                  ],
-                  { min: 1, max: 3 }
-                ),
-              },
-              product: product.id,
-              retailer: faker.helpers.arrayElement(createdRetailers).id,
-            };
-          })
-        );
-        const createdVariants = await tx
-          .insert(productVariants)
-          .values(variantsData)
-          .returning();
-
-        // Seed prices
-        console.log("Creating variant prices...");
-        const pricesData = createdVariants.flatMap((variant) => {
-          const selectedRetailers = faker.helpers.arrayElements(
-            createdRetailers,
-            {
-              min: 1,
-              max: Math.min(counts.pricesPerVariant, createdRetailers.length),
-            }
-          );
-          return selectedRetailers.map((retailer) => ({
-            price: faker.commerce.price({ min: 20, max: 500, dec: 2 }),
-            productVariant: variant.id,
-            retailer: retailer.id,
-          }));
-        });
-        await tx.insert(variantPrices).values(pricesData);
-
-        console.log("✅ Database seeding completed successfully!");
-        console.log(`Created:`);
-        console.log(`  - ${createdBrands.length} brands`);
-        console.log(`  - ${createdCollections.length} collections`);
-        console.log(`  - ${createdRetailers.length} retailers`);
-        console.log(`  - ${createdProducts.length} products`);
-        console.log(`  - ${createdVariants.length} variants`);
-        console.log(`  - ${pricesData.length} prices`);
-      } catch (error) {
-        console.error("❌ Error seeding database:", error);
-        tx.rollback();
-        throw error;
+        await runSeed(db);
       }
-    });
+    } catch (error) {
+      console.error("❌ Error seeding database:", error);
+      throw error;
+    }
 
     return {
       result: {

@@ -9,14 +9,16 @@
     },
     "start": {
       "dependsOn": ["build"],
-      "persistent": true
+      "persistent": true,
+      "env": ["NUXT_DATABASE_URL"]
     },
     "prepare": {
       "dependsOn": ["^prepare"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["NUXT_DATABASE_URL"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -26,6 +28,12 @@
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]
+    },
+    "db:generate": {
+      "inputs": ["./drizzle.config.*"]
+    },
+    "db:migrate": {
+      "inputs": ["./drizzle.config.*"]
     }
   }
 }

@@ -16,9 +16,6 @@ coverage
 # Turbo
 .turbo
 
-# Vercel
-.vercel
-
 # Build Outputs
 .next
 .nuxt
@@ -31,6 +28,9 @@ output
 build
 dist
 
+# Cache
+.cache
+.eslintcache
 
 # Debug
 logs

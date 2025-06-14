@@ -17,6 +17,10 @@ export default defineNuxtConfig({
     },
   },
 
+  build: {
+    transpile: ["trpc-nuxt"],
+  },
+
   runtimeConfig: {
     session: {
       password: "",
@@ -62,5 +66,6 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxt/ui",
     "@nuxt/test-utils",
+    "magic-regexp/nuxt",
   ],
 });

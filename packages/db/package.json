@@ -3,15 +3,17 @@
   "type": "module",
   "main": "./nuxt.config.ts",
   "scripts": {
-    "build": "bun run -b nuxt build",
-    "start": "nuxt preview",
+    "db:generate": "bun run drizzle-kit generate",
+    "db:migrate": "bun run drizzle-kit migrate",
+    "db:drop": "bun run drizzle-kit drop",
     "prepare": "nuxt prepare",
-    "dev": "bun run --watch --hot nuxt prepare",
+    "dev": "drizzle-kit studio",
     "lint": "eslint . --fix",
     "test": "vitest run",
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
+    "drizzle-orm": "^0.44.2",
     "drizzle-zod": "^0.8.2",
     "nuxt": "^3.17.3",
     "vue": "^3.5.14",
@@ -22,6 +24,7 @@
     "@nuxt/eslint": "1.4.0",
     "@nuxt/test-utils": "^3.19.0",
     "@vue/test-utils": "^2.4.6",
+    "drizzle-kit": "^0.31.1",
     "eslint": "^9.27.0",
     "happy-dom": "^17.4.7",
     "playwright": "^1.52.0",

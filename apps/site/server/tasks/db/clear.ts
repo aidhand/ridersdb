@@ -1,17 +1,3 @@
-import { useNodePg } from "@repo/db";
-import {
-  brands,
-  priceHistory,
-  productCategories,
-  productVariants,
-  products,
-  retailers,
-  stockHistory,
-} from "@repo/db/schema";
-
-const { database } = useRuntimeConfig();
-const db = useNodePg(database.url);
-
 export default defineTask({
   meta: {
     name: "db:clear",
@@ -20,34 +6,42 @@ export default defineTask({
   async run() {
     console.log("🗑️  Clearing database...");
 
-    await db.transaction(async (tx) => {
+    // Helper function for clearing logic
+    async function runClear(dbOrTx) {
+      // Delete data in reverse dependency order to respect foreign key constraints
+      console.log("Deleting product variants...");
+      await dbOrTx.delete(productVariants);
+
+      console.log("Deleting products...");
+      await dbOrTx.delete(products);
+
+      console.log("Deleting retailers...");
+      await dbOrTx.delete(retailers);
+
+      console.log("Deleting product categories...");
+      await dbOrTx.delete(productCategories);
+
+      console.log("Deleting brands...");
+      await dbOrTx.delete(brands);
+    }
+
+    try {
       try {
-        // Delete in order to respect foreign key constraints
-        console.log("Deleting price history...");
-        await tx.delete(priceHistory);
-
-        console.log("Deleting stock history...");
-        await tx.delete(stockHistory);
-
-        console.log("Deleting product variants...");
-        await tx.delete(productVariants);
-
-        console.log("Deleting products...");
-        await tx.delete(products);
-
-        console.log("Deleting retailers...");
-        await tx.delete(retailers);
-
-        console.log("Deleting categories...");
-        await tx.delete(productCategories);
-
-        console.log("Deleting brands...");
-        await tx.delete(brands);
-      } catch (error) {
-        console.error("❌ Error clearing database:", error);
-        tx.rollback();
+        // Attempt to use a transaction
+        await db.transaction(async (tx) => {
+          await runClear(tx);
+        });
+      } catch (txError) {
+        console.warn(
+          "⚠️ Transaction failed, falling back to non-transactional clear:",
+          txError
+        );
+        await runClear(db);
       }
-    });
+    } catch (error) {
+      console.error("❌ Error clearing database:", error);
+      throw error;
+    }
 
     console.log("✅ Database cleared successfully!");
 

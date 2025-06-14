@@ -47,6 +47,10 @@ export const productCategoryRelations = relations(
 export const productVariants = pgTable("product_variants", {
   ...baseFields(),
 
+  ...slugField(),
+  ...nameField(),
+  ...descriptionField(),
+
   // Parent relationships
   // - product (many-to-one)
   //
@@ -57,7 +61,9 @@ export const productVariants = pgTable("product_variants", {
   //
   // Many-to-many relationships
   // - retailers
+
   productId: uuid("product_id").notNull(),
+
   sku: varchar("sku", { length: 100 }).notNull(),
   size: varchar("size", { length: 50 }),
   color: varchar("color", { length: 50 }),

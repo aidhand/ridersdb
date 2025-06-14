@@ -14,7 +14,9 @@
     "format": "prettier --write .",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "db:generate": "turbo run db:generate",
+    "db:migrate": "turbo run db:migrate"
   },
   "devDependencies": {
     "prettier": "^3.5.3",

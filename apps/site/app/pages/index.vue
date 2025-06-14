@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import type { SelectUser } from "../../../../packages/db/shared/types/tables";
+import { users } from "../../../../packages/db/shared/utils/tables";
+const usersTable = users;
+
 const db = useDb();
 
 const userEmail = ref("");
@@ -16,7 +21,7 @@ const createUser = async () => {
       .insert(usersTable)
       .values({
         email: userEmail.value,
-        name: userName.value,
+        firstName: userName.value,
       })
       .returning();
 
@@ -27,10 +32,12 @@ const createUser = async () => {
       newUserStatus.value = "error";
       newUserError.value = "User creation failed.";
     }
+  } catch (e) {
+    newUserStatus.value = "error";
+    newUserError.value = e instanceof Error ? e.message : String(e);
   } finally {
     userEmail.value = "";
     userName.value = "";
-    newUserStatus.value = "idle";
   }
 };
 // Meta tags for SEO
