@@ -1,4 +1,6 @@
 import { faker } from "@faker-js/faker";
+import type { NeonHttpQueryResultHKT } from "drizzle-orm/neon-http";
+import type { PgTransaction } from "drizzle-orm/pg-core";
 import { generateUniqueSlug } from "~~/server/utils/strings";
 
 export default defineTask({
@@ -30,7 +32,9 @@ export default defineTask({
     const usedVariantSlugs = new Set<string>();
 
     // Helper function for seeding logic
-    async function runSeed(dbOrTx) {
+    async function runSeed(
+      dbOrTx: PgTransaction<NeonHttpQueryResultHKT> | typeof db
+    ) {
       // Seed brands
       console.log("Creating brands...");
       const brandsData = Array.from({ length: counts.brands }, () => {

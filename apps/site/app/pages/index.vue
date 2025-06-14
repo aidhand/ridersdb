@@ -4,8 +4,6 @@ import type { SelectUser } from "../../../../packages/db/shared/types/tables";
 import { users } from "../../../../packages/db/shared/utils/tables";
 const usersTable = users;
 
-const db = useDb();
-
 const userEmail = ref("");
 const userName = ref("");
 

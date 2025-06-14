@@ -1,22 +1,5 @@
-<script setup lang="ts">
-interface Props {
-  /** Whether to show border bottom */
-  bordered?: boolean;
-  /** Whether to make header sticky */
-  sticky?: boolean;
-}
-
-const { bordered = true, sticky = false } = defineProps<Props>();
-
-const headerClasses = computed(() => [
-  "bg-white/80 dark:bg-neutral-950/80 backdrop-blur-sm",
-  bordered && "border-b border-neutral-500/20",
-  sticky && "sticky top-0 z-50",
-]);
-</script>
-
 <template>
-  <header :class="headerClasses">
+  <header class="bg-white/80 dark:bg-neutral-950/80 backdrop-blur-sm">
     <BaseContainer>
       <div class="flex h-16 items-center justify-between gap-8">
         <!-- Logo/Brand -->

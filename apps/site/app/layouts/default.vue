@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col bg-white dark:bg-neutral-950">
     <!-- Header -->
-    <SiteHeader :sticky="true" />
+    <SiteHeader />
 
     <!-- Main Content -->
     <main
