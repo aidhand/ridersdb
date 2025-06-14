@@ -1,29 +1,25 @@
 {
   "name": "ridersdb",
+  "type": "module",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo run build",
     "start": "turbo run start",
     "prepare": "turbo run prepare",
     "dev": "turbo run dev",
     "format": "prettier --write .",
-    "lint": "oxlint && turbo run lint",
+    "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "oxlint": "^0.17.0",
     "prettier": "^3.5.3",
     "turbo": "^2.5.3",
     "vitest": "^3.1.4"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "packageManager": "bun@1.2.13"
 }

@@ -7,7 +7,7 @@ RidersDB is a platform to search, compare, and find motorcycles, gear, and acces
 - `apps/site`: Main Nuxt 3 web application
 - `packages/db`: Database ORM and schema (Drizzle ORM)
 - `packages/types`: Shared TypeScript types
-- `packages/validation`: Validation schemas (valibot)
+- `packages/validation`: Validation schemas (zod)
 - `packages/config`: Shared ESLint and TypeScript config
 
 ## Getting Started
@@ -28,32 +28,9 @@ RidersDB is a platform to search, compare, and find motorcycles, gear, and acces
 
 - `dev`: Start development server
 - `build`: Build all apps and packages
-- `lint`: Lint all code (ESLint Flat Config, TypeScript support)
-- `format`: Format codebase (Prettier)
+- `lint`: Lint all code (Biome, Oxlint, and ESLint)
+- `format`: Format codebase (Biome and Prettier)
 - `typecheck`: Type check all packages and apps
-
-## Linting & Code Quality
-
-This monorepo uses a modern, three-tier linting system:
-
-1. **Biome** - Fast formatting, import organization, and basic linting
-2. **Oxlint** - Ultra-fast TypeScript/JavaScript linting
-3. **ESLint** - Comprehensive framework-specific linting
-
-### Available Commands
-
-- `bun run lint:all` - Run complete pipeline: Biome → Oxlint → ESLint
-- `bun run lint:check` - Check all linters without auto-fixing
-- `bun run biome:fix` - Apply Biome fixes (formatting + basic linting)
-- `bun run oxlint:check` - Run Oxlint checks
-
-See [LINTING.md](./LINTING.md) for detailed setup information.
-
-## TypeScript & Linting
-
-- Uses ESLint Flat Config with TypeScript support via `@typescript-eslint`.
-- Shared config in `packages/config`.
-- Each package/app has a `typecheck` script for type safety.
 
 ## License
 

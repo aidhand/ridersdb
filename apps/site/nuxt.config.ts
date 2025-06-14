@@ -3,36 +3,12 @@ import { defineNuxtConfig } from "nuxt/config";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
+  future: { compatibilityVersion: 4 },
   devtools: { enabled: true },
   typescript: { typeCheck: true },
   eslint: { checker: true },
 
-  future: {
-    compatibilityVersion: 4,
-  },
-
-  nitro: {
-    preset: "bun",
-
-    experimental: {
-      tasks: true,
-      openAPI: true,
-    },
-  },
-
-  imports: {
-    dirs: ["stores"],
-  },
-
-  modules: [
-    "@nuxt/eslint",
-    "@nuxt/fonts",
-    "@nuxt/icon",
-    "@nuxt/image",
-    "@nuxt/ui",
-    "@nuxt/test-utils/module",
-    "nuxt-auth-utils",
-  ],
+  css: ["~/assets/css/main.css"],
 
   fonts: {
     defaults: {
@@ -40,8 +16,6 @@ export default defineNuxtConfig({
       subsets: ["latin", "latin-ext"],
     },
   },
-
-  css: ["~/assets/css/main.css"],
 
   runtimeConfig: {
     session: {
@@ -69,4 +43,24 @@ export default defineNuxtConfig({
 
     public: {},
   },
+
+  nitro: {
+    preset: "bun",
+
+    experimental: {
+      tasks: true,
+      openAPI: true,
+    },
+  },
+
+  extends: ["@repo/db", "@repo/auth"],
+
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@nuxt/icon",
+    "@nuxt/image",
+    "@nuxt/ui",
+    "@nuxt/test-utils",
+  ],
 });

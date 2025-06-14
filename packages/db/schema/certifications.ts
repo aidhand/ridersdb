@@ -9,11 +9,13 @@ import {
 } from "./common";
 import { products } from "./products";
 
-export const brands = pgTable(
-  "brands",
+export const certifications = pgTable(
+  "certifications",
   {
     ...baseFields(),
+
     ...slugField(),
+
     ...nameField(),
     ...descriptionField(),
 
@@ -21,16 +23,16 @@ export const brands = pgTable(
     // - nil
     //
     // Child relationships
-    // - products (one-to-many)
+    // - nil
     //
     // Many-to-many relationships
-    // - nil
+    // - products
 
     ...timestampFields(),
   },
-  (table) => [index().on(table.slug), index().on(table.name)]
+  (table) => [index().on(table.slug)]
 );
 
-export const brandRelations = relations(brands, ({ many }) => ({
+export const certificationRelations = relations(certifications, ({ many }) => ({
   products: many(products),
 }));

@@ -1,24 +1,46 @@
 import { relations } from "drizzle-orm";
-import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { productVariants, variantPrices } from "./variants";
+import { index, pgTable, varchar } from "drizzle-orm/pg-core";
+import {
+  baseFields,
+  descriptionField,
+  nameField,
+  slugField,
+  timestampFields,
+} from "./common";
+import { products, productVariants } from "./products";
 
-// Retailers table to track different product sources
 export const retailers = pgTable(
   "retailers",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    slug: text("slug").notNull().unique(),
-    name: text("name").notNull(),
-    url: text("url").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at")
-      .notNull()
-      .$onUpdateFn(() => new Date()),
+    ...baseFields(),
+
+    ...slugField(),
+
+    ...nameField(),
+    ...descriptionField(),
+
+    website: varchar("website", { length: 255 }).notNull(),
+
+    // Parent relationships
+    // - nil
+    //
+    // Child relationships
+    // - nil
+    //
+    // Many-to-many relationships
+    // - products
+    // - variants
+
+    ...timestampFields(),
   },
-  (table) => [index().on(table.slug)]
+  (table) => [
+    index().on(table.slug),
+    index().on(table.name),
+    index().on(table.website),
+  ]
 );
 
-export const retailersRelations = relations(retailers, ({ many }) => ({
-  variantPrices: many(variantPrices),
-  productVariants: many(productVariants),
+export const retailerRelations = relations(retailers, ({ many }) => ({
+  products: many(products),
+  variants: many(productVariants),
 }));
