@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   future: { compatibilityVersion: 4 },
   devtools: { enabled: true },
-  typescript: { typeCheck: true },
+  // typescript: { typeCheck: true },
   eslint: { checker: true },
 
   css: ["~/assets/css/main.css"],
@@ -22,17 +22,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    session: {
-      password: "",
-    },
-
-    oauth: {
-      github: {
-        clientId: "",
-        clientSecret: "",
-      },
-    },
-
     database: {
       url: "",
     },
@@ -57,8 +46,6 @@ export default defineNuxtConfig({
     },
   },
 
-  extends: ["@repo/db", "@repo/auth"],
-
   modules: [
     "@nuxt/eslint",
     "@nuxt/fonts",
@@ -68,4 +55,25 @@ export default defineNuxtConfig({
     "@nuxt/test-utils",
     "magic-regexp/nuxt",
   ],
+
+  ui: {
+    theme: {
+      colors: [
+        "primary",
+        "secondary",
+        "success",
+        "info",
+        "warning",
+        "error",
+        "neutral",
+        // OAuth Provider Brand Colors
+        "discord",
+        "microsoft",
+        "google",
+        "spotify",
+        "facebook",
+        "twitter",
+      ],
+    },
+  },
 });

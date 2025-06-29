@@ -2,9 +2,8 @@
 import { useCycleList } from "@vueuse/core";
 
 const colorMode = useColorMode();
-const { state, next } = useCycleList(["system", "dark", "light"] as const, {
-  initialValue: colorMode.preference,
-});
+const availableColors = ["system", "light", "dark"];
+const { next } = useCycleList(availableColors);
 </script>
 
 <template>
@@ -16,7 +15,7 @@ const { state, next } = useCycleList(["system", "dark", "light"] as const, {
     class="flex items-center gap-2"
     @click="colorMode.preference = next()"
   >
-    <span class="sr-only">Switch to {{ state }} mode</span>
+    <span class="sr-only">Switch to {{ next() }} mode</span>
 
     <span
       v-if="colorMode.preference === 'system'"

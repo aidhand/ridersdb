@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-// const { loggedIn } = useUserSession();
 const { site } = useAppConfig();
-
-// watch(loggedIn, () => {
-//   if (!loggedIn.value) {
-//     navigateTo("/");
-//   }
-// });
 
 useHead({
   titleTemplate: (title) => {

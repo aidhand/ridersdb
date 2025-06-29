@@ -1,16 +1,95 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@theme {
+@theme static {
   --font-sans: "Inter", sans-serif;
 
-  --breakpoint-2xs: 32rem;
-  --breakpoint-xs: 48rem;
-  --breakpoint-sm: 56rem;
-  --breakpoint-md: 64rem;
+  --breakpoint-2xs: 24rem;
+  --breakpoint-xs: 32rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 56rem;
   --breakpoint-lg: 72rem;
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 96rem;
+
+  /* OAuth Brand Colors */
+  /* Discord - Using official blurple */
+  --color-discord-50: #eef2ff;
+  --color-discord-100: #e0e7ff;
+  --color-discord-200: #c7d2fe;
+  --color-discord-300: #a5b4fc;
+  --color-discord-400: #818cf8;
+  --color-discord-500: #5865f2; /* Official Discord Blurple */
+  --color-discord-600: #4f46e5;
+  --color-discord-700: #4338ca;
+  --color-discord-800: #3730a3;
+  --color-discord-900: #312e81;
+  --color-discord-950: #1e1b4b;
+
+  /* Microsoft - Using official blue */
+  --color-microsoft-50: #eff6ff;
+  --color-microsoft-100: #dbeafe;
+  --color-microsoft-200: #bfdbfe;
+  --color-microsoft-300: #93c5fd;
+  --color-microsoft-400: #60a5fa;
+  --color-microsoft-500: #00bcf2; /* Official Microsoft Blue */
+  --color-microsoft-600: #2563eb;
+  --color-microsoft-700: #1d4ed8;
+  --color-microsoft-800: #1e40af;
+  --color-microsoft-900: #1e3a8a;
+  --color-microsoft-950: #172554;
+
+  /* Google - Using official red */
+  --color-google-50: #fef2f2;
+  --color-google-100: #fee2e2;
+  --color-google-200: #fecaca;
+  --color-google-300: #fca5a5;
+  --color-google-400: #f87171;
+  --color-google-500: #ea4335; /* Official Google Red */
+  --color-google-600: #dc2626;
+  --color-google-700: #b91c1c;
+  --color-google-800: #991b1b;
+  --color-google-900: #7f1d1d;
+  --color-google-950: #450a0a;
+
+  /* Spotify - Using official green */
+  --color-spotify-50: #f0fdf4;
+  --color-spotify-100: #dcfce7;
+  --color-spotify-200: #bbf7d0;
+  --color-spotify-300: #86efac;
+  --color-spotify-400: #4ade80;
+  --color-spotify-500: #1db954; /* Official Spotify Green */
+  --color-spotify-600: #16a34a;
+  --color-spotify-700: #15803d;
+  --color-spotify-800: #166534;
+  --color-spotify-900: #14532d;
+  --color-spotify-950: #052e16;
+
+  /* Facebook - Using official blue */
+  --color-facebook-50: #eff6ff;
+  --color-facebook-100: #dbeafe;
+  --color-facebook-200: #bfdbfe;
+  --color-facebook-300: #93c5fd;
+  --color-facebook-400: #60a5fa;
+  --color-facebook-500: #1877f3; /* Official Facebook Blue */
+  --color-facebook-600: #2563eb;
+  --color-facebook-700: #1d4ed8;
+  --color-facebook-800: #1e40af;
+  --color-facebook-900: #1e3a8a;
+  --color-facebook-950: #172554;
+
+  /* Twitter - Using official blue */
+  --color-twitter-50: #eff6ff;
+  --color-twitter-100: #dbeafe;
+  --color-twitter-200: #bfdbfe;
+  --color-twitter-300: #93c5fd;
+  --color-twitter-400: #60a5fa;
+  --color-twitter-500: #1da1f2; /* Official Twitter Blue */
+  --color-twitter-600: #2563eb;
+  --color-twitter-700: #1d4ed8;
+  --color-twitter-800: #1e40af;
+  --color-twitter-900: #1e3a8a;
+  --color-twitter-950: #172554;
 }
 
 html {

@@ -1,46 +1,134 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
-node_modules
+# === Dependencies ===
+node_modules/
 .pnp
 .pnp.js
+jspm_packages/
+bower_components/
 
-# Local env files
+# === Environment Variables ===
 .env
 .env.*
 !.env.example
 
-# Testing
-coverage
-
-# Turbo
-.turbo
-
-# Build Outputs
-.next
-.nuxt
-.nitro
-.data
-.output
-.cache
-out
-output
-build
-dist
-
-# Cache
-.cache
-.eslintcache
-
-# Debug
-logs
+# === Logs ===
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
 
-# Misc
+# === Runtime Data ===
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# === Diagnostic Reports ===
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# === Testing & Coverage ===
+coverage/
+coverage.json
+*.lcov
+.nyc_output
+lib-cov
+
+# === Turbo ===
+.turbo/
+
+# === Build Outputs ===
+.next/
+.nuxt/
+.nitro/
+.data/
+.output/
+.cache/
+out/
+output/
+build/
+dist/
+lib/
+
+# === Framework Specific ===
+# Gatsby
+.cache/
+public/
+
+# Vuepress
+.vuepress/dist/
+.temp/
+
+# Vitepress
+**/.vitepress/dist/
+**/.vitepress/cache/
+
+# Docusaurus
+.docusaurus/
+
+# Serverless
+.serverless/
+
+# === TypeScript ===
+*.tsbuildinfo
+**/*.d.ts.map
+
+# === Package Managers ===
+# npm
+.npm/
+*.tgz
+
+# Yarn
+.yarn-integrity
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# pnpm
+.pnp.*
+
+# === Cache ===
+.cache/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+
+# === Development Tools ===
+.vscode-test/
+.fleet/
+.idea/
+
+# === OS & Editor Files ===
 .DS_Store
-.fleet
-.idea
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 *.pem
+
+# === Temporary Files ===
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# === Application Specific ===
+# Crawl storage
+apps/crawl/storage/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Local configuration
+config/local.*

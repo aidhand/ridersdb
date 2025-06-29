@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package",
   "name": "@repo/site",
   "type": "module",
   "private": true,
@@ -16,9 +17,10 @@
     "@nuxt/icon": "1.13.0",
     "@nuxt/image": "1.10.0",
     "@nuxt/ui": "^3.1.2",
+    "@nuxtjs/color-mode": "^3.5.2",
     "@trpc/client": "^11.4.1",
     "@trpc/server": "^11.4.1",
-    "@vueuse/core": "^13.2.0",
+    "@vueuse/core": "^13.3.0",
     "drizzle-orm": "^0.44.2",
     "drizzle-zod": "^0.8.2",
     "magic-regexp": "^0.10.0",
@@ -30,8 +32,9 @@
     "zod": "^3.25.49"
   },
   "devDependencies": {
-    "@repo/db": "workspace:*",
-    "@repo/auth": "workspace:*",
+    "@repo/data": "workspace:*",
+    "@repo/shared-utils": "workspace:*",
+    "@repo/shared-types": "workspace:*",
     "@nuxt/eslint": "1.4.0",
     "@faker-js/faker": "^9.8.0",
     "@nuxt/test-utils": "^3.19.0",

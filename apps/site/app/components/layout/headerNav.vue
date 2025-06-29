@@ -39,7 +39,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <nav
-    class="flex items-center justify-between py-4 border-b border-neutral-500/10"
+    class="flex items-center justify-between py-4 border-b border-neutral-200 dark:border-neutral-800"
     aria-label="Page navigation"
   >
     <section class="flex items-center gap-4">

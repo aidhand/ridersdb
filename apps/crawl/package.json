@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@repo/crawl",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "crawl": "bun run src/main.ts",
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@repo/data": "workspace:*",
+    "@repo/shared-utils": "workspace:*",
+    "@repo/shared-types": "workspace:*",
+    "crawlee": "^3.0.0",
+    "cheerio": "*",
+    "playwright": "*",
+    "puppeteer": "*"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@apify/tsconfig": "^0.1.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^9.27.0",
+    "prettier": "^3.5.3",
+    "tsx": "^4.4.0",
+    "typescript": "~5.8.0",
+    "@types/node": "^22.0.0",
+    "vitest": "^3.2.4"
+  }
+}

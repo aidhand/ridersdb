@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@repo/shared-utils",
+  "description": "Shared utilities for the RidersDB monorepo",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./database": {
+      "import": "./dist/database.js",
+      "types": "./dist/database.d.ts"
+    },
+    "./logging": {
+      "import": "./dist/logging.js",
+      "types": "./dist/logging.d.ts"
+    },
+    "./validation": {
+      "import": "./dist/validation.js",
+      "types": "./dist/validation.d.ts"
+    },
+    "./errors": {
+      "import": "./dist/errors.js",
+      "types": "./dist/errors.d.ts"
+    },
+    "./strings": {
+      "import": "./dist/strings.js",
+      "types": "./dist/strings.d.ts"
+    },
+    "./data-normalizer": {
+      "import": "./dist/data-normalizer.js",
+      "types": "./dist/data-normalizer.d.ts"
+    },
+    "./price-parser": {
+      "import": "./dist/price-parser.js",
+      "types": "./dist/price-parser.d.ts"
+    },
+    "./helpers": {
+      "import": "./dist/helpers.js",
+      "types": "./dist/helpers.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types.js",
+      "types": "./dist/types.d.ts"
+    }
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "lint": "eslint . --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "*"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^9.27.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.6.3",
+    "vitest": "^3.2.4"
+  }
+}

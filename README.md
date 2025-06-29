@@ -5,10 +5,11 @@ RidersDB is a platform to search, compare, and find motorcycles, gear, and acces
 ## Monorepo Structure
 
 - `apps/site`: Main Nuxt 3 web application
-- `packages/db`: Database ORM and schema (Drizzle ORM)
+- `packages/data`: Database ORM and schema (Drizzle ORM)
 - `packages/types`: Shared TypeScript types
 - `packages/validation`: Validation schemas (zod)
 - `packages/config`: Shared ESLint and TypeScript config
+- `packages/vitest-config`: Shared Vitest configuration
 
 ## Getting Started
 

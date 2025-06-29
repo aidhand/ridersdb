@@ -1,39 +1,45 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  
   "ui": "tui",
+
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".nuxt/**", "!.nuxt/cache/**"]
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "src/**", "tsconfig.json"],
+      "outputs": [".nuxt/**", "!.nuxt/cache/**", "dist/**", ".tsbuildinfo"]
     },
+
     "start": {
       "dependsOn": ["build"],
       "persistent": true,
       "env": ["NUXT_DATABASE_URL"]
     },
-    "prepare": {
-      "dependsOn": ["^prepare"]
-    },
+
     "dev": {
       "cache": false,
       "persistent": true,
       "env": ["NUXT_DATABASE_URL"]
     },
+
+    "clean": {
+      "dependsOn": ["^clean"]
+    },
+
     "lint": {
       "dependsOn": ["^lint"]
     },
-    "test": {
-      "dependsOn": ["^test"]
+
+    "format": {
+      "dependsOn": ["^format"]
     },
+
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },
-    "db:generate": {
-      "inputs": ["./drizzle.config.*"]
-    },
-    "db:migrate": {
-      "inputs": ["./drizzle.config.*"]
+
+    "test": {
+      "dependsOn": ["^test"]
     }
   }
 }

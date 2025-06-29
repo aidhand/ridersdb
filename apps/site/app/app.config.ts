@@ -8,6 +8,13 @@ export default defineAppConfig({
     colors: {
       primary: "sky",
       neutral: "zinc",
+      // OAuth Provider Brand Colors
+      discord: "discord",
+      microsoft: "microsoft",
+      google: "google",
+      spotify: "spotify",
+      facebook: "facebook",
+      twitter: "twitter",
     },
 
     button: {
