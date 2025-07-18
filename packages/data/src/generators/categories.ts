@@ -1,14 +1,6 @@
 import { faker } from "@faker-js/faker";
-import type { CategoryInsert } from "../schema.js";
-import { generateTimestampSlug, runInTransaction } from "@repo/shared-utils";
-import { logProgress, logSuccess } from "../utils/generator-utils.js";
-import type {
-  AnyDatabase,
-  GeneratorOptions,
-} from "@repo/shared-types/generators";
-
-// Track used slugs to avoid duplicates
-const usedSlugs = new Set<string>();
+import type { CategoryInsert } from "../schema";
+import { generateSlug } from "@repo/shared";
 
 /**
  * Predefined category data for motorcycle gear
@@ -28,12 +20,11 @@ const CATEGORY_DATA = [
 ];
 
 /**
- * Generates a single category
+ * Generates a single category without slug tracking
  */
-function generateCategoryData(): CategoryInsert {
+export async function generateCategory(): Promise<CategoryInsert> {
   const categoryData = faker.helpers.arrayElement(CATEGORY_DATA);
-  const slug = generateTimestampSlug(categoryData.name);
-  usedSlugs.add(slug);
+  const slug = generateSlug(`${categoryData.name}-${Date.now()}`);
 
   return {
     slug,
@@ -43,61 +34,46 @@ function generateCategoryData(): CategoryInsert {
 }
 
 /**
- * Creates categories - handles both data generation and database seeding
+ * Generates multiple categories (may have duplicate slugs)
  */
-export async function createCategories(
-  options: GeneratorOptions = {}
-): Promise<CategoryInsert[]> {
-  const { count = 1, db, transaction, returnData = !db } = options;
-
-  // Generate the data
-  const categories: CategoryInsert[] = [];
-  for (let i = 0; i < count; i++) {
-    categories.push(generateCategoryData());
-  }
-
-  // If only generating data, return it
-  if (returnData) {
-    return categories;
-  }
-
-  // Otherwise, seed the database
-  if (!db) {
-    throw new Error("Database instance is required for seeding");
-  }
-
-  logProgress(`Creating ${count} categories...`);
-
-  const result = await runInTransaction(
-    db,
-    async (tx) => {
-      // Import table schema only when needed to avoid circular dependency
-      const { categories: categoriesTable } = require("@repo/data");
-
-      // Insert all categories at once for better performance
-      await tx.insert(categoriesTable).values(categories);
-
-      return categories;
-    },
-    transaction
-  );
-
-  logSuccess(`Created ${count} categories`);
-  return result;
+export async function generateCategories(count = 8): Promise<CategoryInsert[]> {
+  const maxCount = Math.min(count, CATEGORY_DATA.length);
+  const promises = Array.from({ length: maxCount }, () => generateCategory());
+  return Promise.all(promises);
 }
 
 /**
- * Seeds categories with predefined motorcycle gear categories
+ * Generates multiple categories with guaranteed unique slugs
  */
-export async function seedCategories(
-  db: AnyDatabase,
-  options: { count?: number; transaction?: any } = {}
-): Promise<void> {
-  const count = Math.min(options.count || 8, CATEGORY_DATA.length);
+export async function generateUniqueCategories(
+  count = 8
+): Promise<CategoryInsert[]> {
+  // Track used slugs to avoid duplicates within this generation session
+  const usedSlugs = new Set<string>();
+  const categories: CategoryInsert[] = [];
+  const maxCount = Math.min(count, CATEGORY_DATA.length);
+  let totalAttempts = 0;
+  const maxAttempts = 1000; // Prevent infinite loops
 
-  await createCategories({
-    count,
-    db,
-    transaction: options.transaction,
-  });
+  while (categories.length < maxCount && totalAttempts < maxAttempts) {
+    // Generate a batch in parallel (generate extra to account for potential duplicates)
+    const batchSize = Math.min(10, (maxCount - categories.length) * 2);
+    const batchPromises = Array.from({ length: batchSize }, () =>
+      generateCategory()
+    );
+    const batchCategories = await Promise.all(batchPromises);
+
+    totalAttempts += batchSize;
+
+    // Filter for unique slugs
+    for (const category of batchCategories) {
+      if (!usedSlugs.has(category.slug) && categories.length < maxCount) {
+        usedSlugs.add(category.slug);
+        categories.push(category);
+      }
+    }
+    // Otherwise throw away the non-unique results and retry
+  }
+
+  return categories;
 }

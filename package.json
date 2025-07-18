@@ -7,24 +7,28 @@
     "apps/*",
     "packages/*"
   ],
+  "packageManager": "bun@1.2.13",
   "scripts": {
     "build": "turbo run build",
     "start": "turbo run start",
     "dev": "turbo run dev",
-    "clean": "turbo run clean",
+    "clean:all": "rimraf -g '{**/coverage,**/coverage.json,**/.*cache,**/*.tsbuildinfo,**/*.log,**/*.map}'",
+    "clean": "turbo run clean --continue",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
-    "db": "bun --cwd packages/tools run ridersdb",
-    "db:migrate": "bun --cwd packages/tools run ridersdb-migrate",
-    "db:seed": "bun --cwd packages/tools run ridersdb-seed",
-    "db:backup": "bun --cwd packages/tools run ridersdb-backup"
+    "test": "turbo run test --continue",
+    "test:watch": "turbo run test:watch"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.18",
+    "@types/node": "^24.0.10",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
     "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
     "turbo": "^2.5.4",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
-  },
-  "packageManager": "bun@1.2.13"
+  }
 }

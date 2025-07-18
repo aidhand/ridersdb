@@ -50,7 +50,6 @@ packages/template/
    ```
 
 3. **Update imports and exports:**
-
    - Modify `src/index.ts` to export your functionality
    - Update test files to test your code
    - Customize the library structure as needed
@@ -168,7 +167,7 @@ bun run biome:fix
    }
 
    // src/lib/index.ts
-   export { NewFeature } from "./feature.js";
+   export { NewFeature } from "./feature";
    ```
 
 2. **Add types:**
@@ -194,7 +193,7 @@ bun run biome:fix
    ```typescript
    // tests/feature.test.ts
    import { describe, it, expect } from "vitest";
-   import { NewFeature } from "../src/lib/feature.js";
+   import { NewFeature } from "../src/lib/feature";
 
    describe("NewFeature", () => {
      it("should work", () => {

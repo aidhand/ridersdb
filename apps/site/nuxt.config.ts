@@ -37,6 +37,12 @@ export default defineNuxtConfig({
     public: {},
   },
 
+  experimental: {
+    asyncContext: true,
+    asyncEntry: true,
+    typedPages: true,
+  },
+
   nitro: {
     preset: "bun",
 
@@ -52,7 +58,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@nuxt/image",
     "@nuxt/ui",
-    "@nuxt/test-utils",
+    "@nuxt/test-utils/module",
     "magic-regexp/nuxt",
   ],
 

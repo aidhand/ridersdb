@@ -1,6 +1,6 @@
-import { baseConfig } from "./dist/eslint/base.js";
-import { typescriptConfig } from "./dist/eslint/typescript.js";
-import { nodeConfig } from "./dist/eslint/node.js";
+import { baseConfig } from "./src/eslint/base";
+import { typescriptConfig } from "./src/eslint/typescript";
+import { nodeConfig } from "./src/eslint/node";
 
 export default [
   ...baseConfig,

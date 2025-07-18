@@ -1,16 +1,16 @@
 <template>
-  <BasePageWrapper>
-    <DesignPageHeader
+  <PageWrapper>
+    <PageHeader
       title="Layout"
       description="Guidelines for spacing, grid, and responsive design in the RidersDB design system."
       :breadcrumbs="[
         { label: 'Design System', to: '/design', icon: 'i-tabler-palette' },
         { label: 'Layout' },
       ]"
-      :navigation-items="[]"
+      :navigation-items="navigationItems"
     />
     <div class="">
-      <DesignPageSection
+      <PageSection
         id="grid"
         title="Grid System"
         description="Use a 12-column grid for desktop layouts and flexible columns for mobile."
@@ -26,8 +26,8 @@
             ></div>
           </div>
         </div>
-      </DesignPageSection>
-      <DesignPageSection
+      </PageSection>
+      <PageSection
         id="spacing"
         title="Spacing"
         description="Consistent spacing is achieved using the spacing scale defined in the design system."
@@ -56,11 +56,25 @@
             }}</span>
           </li>
         </ul>
-      </DesignPageSection>
+      </PageSection>
     </div>
-  </BasePageWrapper>
+  </PageWrapper>
 </template>
 
 <script setup lang="ts">
+// Navigation items
+const navigationItems = [
+  { label: "Variants", hash: "#variants", icon: "i-tabler-palette" },
+  { label: "Colors", hash: "#colors", icon: "i-tabler-color-swatch" },
+  { label: "Sizes", hash: "#sizes", icon: "i-tabler-dimensions" },
+  { label: "States", hash: "#states", icon: "i-tabler-toggle-left" },
+  { label: "Icons", hash: "#icons", icon: "i-tabler-icons" },
+  { label: "Usage", hash: "#usage", icon: "i-tabler-list-check" },
+  {
+    label: "Accessibility",
+    hash: "#accessibility",
+    icon: "i-tabler-accessible",
+  },
+];
 // No additional logic needed for static layout page
 </script>

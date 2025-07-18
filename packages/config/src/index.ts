@@ -1,14 +1,11 @@
 // ESLint configurations
-export { baseConfig as eslintBase } from "./eslint/base.js";
-export { typescriptConfig as eslintTypescript } from "./eslint/typescript.js";
-export { nodeConfig as eslintNode } from "./eslint/node.js";
-export {
-  vueConfig as eslintVue,
-  nuxtConfig as eslintNuxt,
-} from "./eslint/vue.js";
+export { baseConfig as eslintBase } from "./eslint/base";
+export { typescriptConfig as eslintTypescript } from "./eslint/typescript";
+export { nodeConfig as eslintNode } from "./eslint/node";
+// export { vueConfig as eslintVue, nuxtConfig as eslintNuxt } from "./eslint/vue";
 
 // Prettier configurations
-export { baseConfig as prettierBase } from "./prettier/base.js";
+export { baseConfig as prettierBase } from "./prettier/base";
 
 // TypeScript configurations are JSON files consumed directly via tsconfig.json extends
 // Available configurations:
@@ -19,7 +16,7 @@ export { baseConfig as prettierBase } from "./prettier/base.js";
 // No programmatic export needed for typescript/*.json
 
 // Oxlint configurations
-export { baseConfig as oxlintBase } from "./oxlint/base.js";
+export { baseConfig as oxlintBase } from "./oxlint/base";
 
 // Vitest configuration
-export { baseConfig as vitestBase } from "./vitest/base.js";
+export { baseConfig as vitestBase } from "./vitest/base";

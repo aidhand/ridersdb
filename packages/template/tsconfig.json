@@ -4,8 +4,7 @@
 
   "compilerOptions": {
     "baseUrl": ".",
-    "rootDir": "./src",
-    "outDir": "./dist",
+    "rootDir": ".",
     "composite": true,
 
     "paths": {
@@ -14,7 +13,5 @@
     }
   },
 
-  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "../shared-types" }, { "path": "../shared-utils" }]
 }

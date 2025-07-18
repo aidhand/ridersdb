@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BaseGrid from "~/components/base/Grid.vue";
+import FeatureCard from "~/components/FeatureCard.vue";
 // SEO Meta
 useSeoMeta({
   title: "Colors - Design System",
@@ -167,34 +169,47 @@ const accessibilityGuidelines = [
   },
 ];
 
-// Typography navigation items with icons
+// Navigation items
 const navigationItems = [
-  { label: "Primary Colors", hash: "#primary", icon: "i-tabler-palette" },
-  { label: "Neutral Colors", hash: "#neutral", icon: "i-tabler-circle" },
-  {
-    label: "Semantic Colors",
-    hash: "#semantic",
-    icon: "i-tabler-alert-circle",
-  },
-  { label: "Brand Colors", hash: "#brand", icon: "i-tabler-brand-abstract" },
-  { label: "Usage Guidelines", hash: "#usage", icon: "i-tabler-list-check" },
+  { label: "Variants", hash: "#variants", icon: "i-tabler-palette" },
+  { label: "Colors", hash: "#colors", icon: "i-tabler-color-swatch" },
+  { label: "Sizes", hash: "#sizes", icon: "i-tabler-dimensions" },
+  { label: "States", hash: "#states", icon: "i-tabler-toggle-left" },
+  { label: "Icons", hash: "#icons", icon: "i-tabler-icons" },
+  { label: "Usage", hash: "#usage", icon: "i-tabler-list-check" },
   {
     label: "Accessibility",
     hash: "#accessibility",
     icon: "i-tabler-accessible",
   },
-  { label: "Examples", hash: "#examples", icon: "i-tabler-code" },
 ];
 
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);
   // Could add toast notification here
 };
+
+const getSemanticIcon = (name: string) => {
+  switch (name.toLowerCase()) {
+    case "success":
+      return "i-heroicons-check-circle";
+    case "warning":
+      return "i-heroicons-exclamation-triangle";
+    case "caution":
+      return "i-heroicons-exclamation-circle";
+    case "error":
+      return "i-heroicons-x-circle";
+    case "info":
+      return "i-heroicons-information-circle";
+    default:
+      return "i-heroicons-question-mark-circle";
+  }
+};
 </script>
 
 <template>
-  <BasePageWrapper>
-    <DesignPageHeader
+  <PageWrapper>
+    <PageHeader
       title="Colors"
       description="Our color system is built for consistency, accessibility, and flexibility. Each color serves a specific purpose and follows strict contrast guidelines."
       :breadcrumbs="[
@@ -205,13 +220,14 @@ const copyToClipboard = (text: string) => {
     />
     <div class="">
       <!-- Primary Colors -->
-      <DesignPageSection
+      <PageSection
         id="primary"
         title="Primary Colors"
         description="Sky is our primary color, used for branding, primary actions, and key interactive elements."
       >
-        <div
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-11 gap-2"
+        <BaseGrid
+          :cols="{ default: 2, sm: 3, md: 6, lg: 8, xl: 11 }"
+          class="gap-2"
         >
           <div
             v-for="color in primaryColors"
@@ -232,16 +248,17 @@ const copyToClipboard = (text: string) => {
               </div>
             </div>
           </div>
-        </div>
-      </DesignPageSection>
+        </BaseGrid>
+      </PageSection>
       <!-- Neutral Colors -->
-      <DesignPageSection
+      <PageSection
         id="neutral"
         title="Neutral Colors"
         description="Our neutral color palette for backgrounds, text, and subtle UI elements."
       >
-        <div
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-11 gap-2"
+        <BaseGrid
+          :cols="{ default: 2, sm: 3, md: 6, lg: 8, xl: 11 }"
+          class="gap-2"
         >
           <div
             v-for="color in neutralColors"
@@ -267,43 +284,43 @@ const copyToClipboard = (text: string) => {
               </div>
             </div>
           </div>
-        </div>
-      </DesignPageSection>
+        </BaseGrid>
+      </PageSection>
       <!-- Semantic Colors -->
-      <DesignPageSection
+      <PageSection
         id="semantic"
         title="Semantic Colors"
         description="Colors that convey meaning and state across the interface."
       >
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <UCard
+        <BaseGrid
+          :cols="{ default: 1, md: 2 }"
+          class="gap-6"
+        >
+          <FeatureCard
             v-for="semantic in semanticColors"
             :key="semantic.name"
+            :title="semantic.name"
+            :description="semantic.usage"
+            :icon="getSemanticIcon(semantic.name)"
+            icon-color="primary"
+            variant="compact"
             class="border border-neutral-200 dark:border-neutral-800"
           >
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <h3 class="font-semibold text-neutral-900 dark:text-white">
-                  {{ semantic.name }}
-                </h3>
-                <div class="flex gap-1">
-                  <div
-                    v-for="(color, idx) in semantic.colors"
-                    :key="idx"
-                    class="w-6 h-6 rounded border border-neutral-200 dark:border-neutral-800"
-                    :style="{ backgroundColor: color }"
-                  />
-                </div>
+            <template #default>
+              <div class="flex gap-1 mt-2">
+                <div
+                  v-for="(color, idx) in semantic.colors"
+                  :key="idx"
+                  class="w-6 h-6 rounded border border-neutral-200 dark:border-neutral-800"
+                  :style="{ backgroundColor: color }"
+                />
               </div>
-              <p class="text-sm text-neutral-600 dark:text-neutral-400">
-                {{ semantic.usage }}
-              </p>
-            </div>
-          </UCard>
-        </div>
-      </DesignPageSection>
+            </template>
+          </FeatureCard>
+        </BaseGrid>
+      </PageSection>
       <!-- Brand Colors -->
-      <DesignPageSection
+      <PageSection
         id="brand"
         title="Brand Colors"
         description="Official brand colors for third-party integrations."
@@ -333,9 +350,9 @@ const copyToClipboard = (text: string) => {
             </div>
           </UCard>
         </div>
-      </DesignPageSection>
+      </PageSection>
       <!-- Usage Guidelines -->
-      <DesignPageSection
+      <PageSection
         id="usage"
         title="Usage Guidelines"
         description="How to apply colors consistently across different contexts."
@@ -393,10 +410,10 @@ const copyToClipboard = (text: string) => {
             </div>
           </div>
         </div>
-      </DesignPageSection>
+      </PageSection>
 
       <!-- Accessibility -->
-      <DesignPageSection
+      <PageSection
         id="accessibility"
         title="Accessibility"
         description="Our color system is designed with accessibility as a core principle."
@@ -408,28 +425,16 @@ const copyToClipboard = (text: string) => {
             class="border border-neutral-200 dark:border-neutral-800"
           >
             <div class="flex items-start">
-              <div
-                :class="[
-                  'p-4 rounded-lg mr-6 flex-shrink-0 w-16 h-16 flex items-center justify-center',
+              <DesignIcon
+                :name="
                   guideline.title === 'Contrast Ratios' ?
-                    'bg-blue-100 dark:bg-blue-900'
-                  : 'bg-green-100 dark:bg-green-900',
-                ]"
-              >
-                <Icon
-                  :name="
-                    guideline.title === 'Contrast Ratios' ?
-                      'i-tabler-contrast'
-                    : 'i-tabler-eye'
-                  "
-                  :class="[
-                    'w-8 h-8',
-                    guideline.title === 'Contrast Ratios' ?
-                      'text-blue-600 dark:text-blue-400'
-                    : 'text-green-600 dark:text-green-400',
-                  ]"
-                />
-              </div>
+                    'i-tabler-contrast'
+                  : 'i-tabler-eye'
+                "
+                :color="
+                  guideline.title === 'Contrast Ratios' ? 'blue' : 'green'
+                "
+              />
               <div class="space-y-4">
                 <div>
                   <h3
@@ -458,10 +463,10 @@ const copyToClipboard = (text: string) => {
             </div>
           </UCard>
         </div>
-      </DesignPageSection>
+      </PageSection>
 
       <!-- Code Examples -->
-      <DesignPageSection
+      <PageSection
         id="examples"
         title="Code Examples"
         description="How to use colors in your code with Tailwind CSS classes."
@@ -502,7 +507,7 @@ const copyToClipboard = (text: string) => {
 &lt;span class="text-sky-600 dark:text-sky-400"&gt;...&lt;/span&gt;</code></pre>
           </UCard>
         </div>
-      </DesignPageSection>
+      </PageSection>
     </div>
-  </BasePageWrapper>
+  </PageWrapper>
 </template>

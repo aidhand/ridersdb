@@ -2,6 +2,7 @@
 const navigationItems = [
   { label: "Home", href: "/" },
   { label: "Products", href: "/products" },
+  { label: "Design", href: "/design" },
   { label: "Dashboard", href: "/user/dashboard" },
 ];
 </script>

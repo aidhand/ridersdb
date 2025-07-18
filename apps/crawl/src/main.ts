@@ -1,4 +1,4 @@
-import { motoHeavenCrawler } from "./sites/motoheaven.js";
+import { motoHeavenCrawler } from "./sites/motoheaven";
 
 // Start the crawl
 await motoHeavenCrawler.run([

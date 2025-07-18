@@ -1,18 +1,6 @@
 import { faker } from "@faker-js/faker";
-import type { ProductInsert } from "../schema.js";
-import {
-  generateSlug,
-  generateTimestampSlug,
-  runInTransaction,
-} from "@repo/shared-utils";
-import { logProgress, logSuccess } from "../utils/generator-utils.js";
-import type {
-  AnyDatabase,
-  GeneratorOptions,
-} from "@repo/shared-types/generators";
-
-// Track used slugs to avoid duplicates
-const usedSlugs = new Set<string>();
+import type { ProductInsert } from "../schema";
+import { generateSlug } from "@repo/shared";
 
 /**
  * Predefined product names for motorcycle gear
@@ -33,38 +21,18 @@ const PRODUCT_NAMES = [
 ];
 
 /**
- * Configuration for different product states
+ * Generates a single product without slug tracking
  */
-const PRODUCT_STATES = {
-  premium: (attributes: Partial<ProductInsert>): Partial<ProductInsert> => ({
-    ...attributes,
-    description: `Premium ${attributes.name?.toLowerCase()} with advanced features and superior materials`,
-  }),
-  budget: (attributes: Partial<ProductInsert>): Partial<ProductInsert> => ({
-    ...attributes,
-    description: `Affordable ${attributes.name?.toLowerCase()} offering great value for money`,
-  }),
-  safety: (attributes: Partial<ProductInsert>): Partial<ProductInsert> => ({
-    ...attributes,
-    description: `Safety-focused ${attributes.name?.toLowerCase()} with enhanced protection features`,
-  }),
-};
-
-/**
- * Generates a single product
- */
-function generateProductData(
+export async function generateProduct(
   options: {
     brandId?: string;
     brandSlug?: string;
     categoryId?: string;
     categorySlug?: string;
-    state?: keyof typeof PRODUCT_STATES;
   } = {}
-): ProductInsert {
+): Promise<ProductInsert> {
   const name = faker.helpers.arrayElement(PRODUCT_NAMES);
-  const slug = generateTimestampSlug(name);
-  usedSlugs.add(slug);
+  const slug = generateSlug(`${name}-${Date.now()}`);
 
   // Use provided IDs or generate fake ones for testing
   const brandId = options.brandId ?? faker.string.uuid();
@@ -73,7 +41,7 @@ function generateProductData(
   const categorySlug =
     options.categorySlug ?? generateSlug(faker.commerce.department());
 
-  let attributes: Partial<ProductInsert> = {
+  const attributes: ProductInsert = {
     slug,
     name,
     description: `${faker.commerce.productAdjective()} ${faker.commerce.productMaterial()} ${name.toLowerCase()} for motorcycle riders`,
@@ -83,141 +51,64 @@ function generateProductData(
     categorySlug,
   };
 
-  // Apply state if specified
-  if (options.state && PRODUCT_STATES[options.state]) {
-    attributes = PRODUCT_STATES[options.state](attributes);
-  }
-
-  return attributes as ProductInsert;
+  return attributes;
 }
 
 /**
- * Creates products - handles both data generation and database seeding
+ * Generates multiple products (may have duplicate slugs)
  */
-export async function createProducts(
-  options: GeneratorOptions & {
+export async function generateProducts(
+  count = 8,
+  options: {
     brandId?: string;
     brandSlug?: string;
     categoryId?: string;
     categorySlug?: string;
-    state?: "premium" | "budget" | "safety";
   } = {}
 ): Promise<ProductInsert[]> {
-  const {
-    count = 1,
-    state,
-    brandId,
-    brandSlug,
-    categoryId,
-    categorySlug,
-    db,
-    transaction,
-    returnData = !db,
-  } = options;
-
-  // Generate the data
-  const products: ProductInsert[] = [];
-  for (let i = 0; i < count; i++) {
-    products.push(
-      generateProductData({
-        brandId,
-        brandSlug,
-        categoryId,
-        categorySlug,
-        state,
-      })
-    );
-  }
-
-  // If only generating data, return it
-  if (returnData) {
-    return products;
-  }
-
-  // Otherwise, seed the database
-  if (!db) {
-    throw new Error("Database instance is required for seeding");
-  }
-
-  logProgress(`Creating ${count} products${state ? ` (${state})` : ""}...`);
-
-  const result = await runInTransaction(
-    db,
-    async (tx) => {
-      // Import table schema only when needed to avoid circular dependency
-      const { products: productsTable } = require("@repo/data");
-
-      // Insert all products at once for better performance
-      await tx.insert(productsTable).values(products);
-
-      return products;
-    },
-    transaction
+  const promises = Array.from({ length: count }, () =>
+    generateProduct(options)
   );
-
-  logSuccess(`Created ${count} products`);
-  return result;
+  return Promise.all(promises);
 }
 
 /**
- * Seeds products with relationships to existing brands and categories
+ * Generates multiple products with guaranteed unique slugs
  */
-export async function seedProducts(
-  db: AnyDatabase,
-  options: { count?: number; transaction?: any } = {}
-): Promise<void> {
-  const count = options.count || 60;
+export async function generateUniqueProducts(
+  count = 8,
+  options: {
+    brandId?: string;
+    brandSlug?: string;
+    categoryId?: string;
+    categorySlug?: string;
+  } = {}
+): Promise<ProductInsert[]> {
+  // Track used slugs to avoid duplicates within this generation session
+  const usedSlugs = new Set<string>();
+  const products: ProductInsert[] = [];
+  let totalAttempts = 0;
+  const maxAttempts = 1000; // Prevent infinite loops
 
-  await runInTransaction(
-    db,
-    async (tx) => {
-      // Import schemas only when needed to avoid circular dependency
-      const { brands, categories } = require("@repo/data");
+  while (products.length < count && totalAttempts < maxAttempts) {
+    // Generate a batch in parallel (generate extra to account for potential duplicates)
+    const batchSize = Math.min(10, (count - products.length) * 2);
+    const batchPromises = Array.from({ length: batchSize }, () =>
+      generateProduct(options)
+    );
+    const batchProducts = await Promise.all(batchPromises);
 
-      // First, get existing brands and categories
-      const existingBrands = await tx.select().from(brands);
-      const existingCategories = await tx.select().from(categories);
+    totalAttempts += batchSize;
 
-      if (existingBrands.length === 0 || existingCategories.length === 0) {
-        throw new Error(
-          "Products seeder requires existing brands and categories. Run brandSeeder and categorySeeder first."
-        );
+    // Filter for unique slugs
+    for (const product of batchProducts) {
+      if (!usedSlugs.has(product.slug) && products.length < count) {
+        usedSlugs.add(product.slug);
+        products.push(product);
       }
+    }
+    // Otherwise throw away the non-unique results and retry
+  }
 
-      // Create products with random brand/category associations
-      for (let i = 0; i < count; i++) {
-        const randomBrand =
-          existingBrands[Math.floor(Math.random() * existingBrands.length)];
-        const randomCategory =
-          existingCategories[
-            Math.floor(Math.random() * existingCategories.length)
-          ];
-
-        // Determine product state based on category and randomness
-        let state: "premium" | "budget" | "safety" | undefined;
-        if (
-          randomCategory.slug?.includes("helmet") ||
-          randomCategory.slug?.includes("armor")
-        ) {
-          state = "safety";
-        } else if (Math.random() > 0.7) {
-          state = "premium";
-        } else if (Math.random() > 0.8) {
-          state = "budget";
-        }
-
-        await createProducts({
-          count: 1,
-          brandId: randomBrand.id,
-          brandSlug: randomBrand.slug,
-          categoryId: randomCategory.id,
-          categorySlug: randomCategory.slug,
-          state,
-          db,
-          transaction: tx,
-        });
-      }
-    },
-    options.transaction
-  );
+  return products;
 }

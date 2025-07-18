@@ -6,9 +6,7 @@ export default [
   ...baseConfig,
   ...typescriptConfig,
   ...nodeConfig,
-  {
-    ignores: ["tests"],
-  },
+
   {
     languageOptions: {
       parserOptions: {

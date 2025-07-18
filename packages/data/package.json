@@ -15,22 +15,17 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "clean": "rm -rf dist",
+    "clean": "rimraf -g {dist,coverage,coverage.json,.*cache,*.tsbuildinfo,**.log,**.map}",
     "lint": "eslint . --fix",
+    "lint:check": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "seed": "bun run src/cli.ts seed",
-    "seed:minimal": "bun run src/cli.ts seed --minimal",
-    "seed:full": "bun run src/cli.ts seed --full",
-    "factory": "bun run src/cli.ts factory"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@faker-js/faker": "^9.8.0",
-    "@repo/shared-utils": "workspace:*",
-    "@repo/shared-types": "workspace:*",
+    "@repo/shared": "workspace:*",
     "commander": "^12.1.0",
     "drizzle-orm": "^0.44.2",
     "drizzle-zod": "^0.8.2",
@@ -38,12 +33,14 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "@types/node": "^24.0.7",
+    "@types/node": "^24.0.10",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
+    "drizzle-kit": "^0.30.0",
     "eslint": "^9.27.0",
-    "prettier": "^3.5.3",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

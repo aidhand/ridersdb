@@ -1,84 +1,104 @@
 <script setup lang="ts">
 // SEO Meta
 useSeoMeta({
-  title: "Design System - RidersDB",
-  description:
-    "Complete design system documentation for RidersDB, including colors, typography, components, and guidelines.",
+  title: "Design System",
+  description: "A system for clear, consistent, and accessible experiences.",
 });
 
 const sections = [
   {
-    title: "Foundation",
-    description: "Core design principles and foundation elements",
+    title: "Philosophy",
+    description: "Our design philosophy and core values",
     items: [
-      { name: "Colors", href: "/design/colors", icon: "i-tabler-color-swatch" },
+      {
+        name: "Brand",
+        href: "/design/brand",
+        icon: "i-tabler-branding-watermark",
+      },
+      {
+        name: "Values",
+        href: "/design/values",
+        icon: "i-tabler-heart",
+      },
+      {
+        name: "Principles",
+        href: "/design/principles",
+        icon: "i-tabler-bulb",
+      },
+    ],
+  },
+  {
+    title: "Foundation",
+    description: "Core design elements and guidelines",
+    items: [
+      {
+        name: "Colors",
+        href: "/design/colors",
+        icon: "i-tabler-color-swatch",
+      },
       {
         name: "Typography",
         href: "/design/typography",
-        icon: "i-tabler-typography",
+        icon: "i-tabler-text-wrap",
       },
-      { name: "Spacing", href: "/design/spacing", icon: "i-tabler-box-margin" },
-      { name: "Layout", href: "/design/layout", icon: "i-tabler-layout-2" },
-    ],
-  },
-  {
-    title: "Components",
-    description: "Reusable UI components and patterns",
-    items: [
-      { name: "Buttons", href: "/design/buttons", icon: "i-tabler-click" },
-      { name: "Forms", href: "/design/forms", icon: "i-tabler-forms" },
-      { name: "Cards", href: "/design/cards", icon: "i-tabler-cards" },
       {
-        name: "Navigation",
-        href: "/design/navigation",
-        icon: "i-tabler-menu-2",
+        name: "Icons",
+        href: "/design/icons",
+        icon: "i-tabler-icons",
       },
-      { name: "States", href: "/design/states", icon: "i-tabler-loader" },
-    ],
-  },
-  {
-    title: "Patterns",
-    description: "Complex UI patterns and interactions",
-    items: [
       {
-        name: "Data Display",
-        href: "/design/data-display",
-        icon: "i-tabler-table",
+        name: "Spacing",
+        href: "/design/spacing",
+        icon: "i-tabler-ruler-2",
       },
-      { name: "Motion", href: "/design/motion", icon: "i-tabler-ripple" },
       {
         name: "Accessibility",
         href: "/design/accessibility",
         icon: "i-tabler-accessible",
       },
+      {
+        name: "Responsive Design",
+        href: "/design/responsive",
+        icon: "i-tabler-device-mobile",
+      },
     ],
   },
   {
-    title: "Guidelines",
-    description: "Usage guidelines and best practices",
-    items: [
-      { name: "Principles", href: "/design/principles", icon: "i-tabler-bulb" },
-      {
-        name: "Voice & Tone",
-        href: "/design/voice-tone",
-        icon: "i-tabler-message-circle",
-      },
-      {
-        name: "Content Strategy",
-        href: "/design/content",
-        icon: "i-tabler-file-text",
-      },
-    ],
+    title: "Patterns",
+    description: "Reusable design patterns and components",
+    items: [],
+  },
+  {
+    title: "Examples",
+    description: "Real-world examples of design system usage",
+    items: [],
+  },
+];
+
+// Navigation items
+const navigationItems = [
+  { label: "Variants", hash: "#variants", icon: "i-tabler-palette" },
+  { label: "Colors", hash: "#colors", icon: "i-tabler-color-swatch" },
+  { label: "Sizes", hash: "#sizes", icon: "i-tabler-dimensions" },
+  { label: "States", hash: "#states", icon: "i-tabler-toggle-left" },
+  { label: "Icons", hash: "#icons", icon: "i-tabler-icons" },
+  { label: "Usage", hash: "#usage", icon: "i-tabler-list-check" },
+  {
+    label: "Accessibility",
+    hash: "#accessibility",
+    icon: "i-tabler-accessible",
   },
 ];
 </script>
 
 <template>
-  <BasePageWrapper>
-    <LayoutHeaderNav
+  <PageWrapper>
+    <PageHeader
+      title="Design System"
       :breadcrumbs="[
         { label: 'Design System', to: '/design', icon: 'i-tabler-palette' },
       ]"
+      :navigation-items="navigationItems"
     />
     <!-- Header -->
     <div class="text-center space-y-6 mb-16">
@@ -97,11 +117,11 @@ const sections = [
       <!-- Quick stats -->
       <div class="flex justify-center gap-8 mt-8">
         <div class="text-center">
-          <div class="text-2xl font-bold text-primary-500">12</div>
-          <div class="text-sm text-neutral-500">Components</div>
+          <div class="text-2xl font-bold text-primary-500">4</div>
+          <div class="text-sm text-neutral-500">Foundation</div>
         </div>
         <div class="text-center">
-          <div class="text-2xl font-bold text-primary-500">8</div>
+          <div class="text-2xl font-bold text-primary-500">3</div>
           <div class="text-sm text-neutral-500">Patterns</div>
         </div>
         <div class="text-center">
@@ -127,32 +147,21 @@ const sections = [
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <UCard
+        <BaseGrid
+          :cols="{ default: 1, md: 2, lg: 3 }"
+          class="gap-4"
+        >
+          <FeatureCard
             v-for="item in section.items"
             :key="item.name"
+            :title="item.name"
+            :icon="item.icon"
+            icon-color="primary"
+            variant="compact"
             class="group hover:shadow-lg transition-all duration-200 cursor-pointer border border-neutral-200 dark:border-neutral-800"
             @click="$router.push(item.href)"
-          >
-            <div class="flex items-center gap-4">
-              <div
-                class="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors"
-              >
-                <UIcon
-                  :name="item.icon"
-                  class="text-xl text-primary-600 dark:text-primary-400"
-                />
-              </div>
-              <div>
-                <h3
-                  class="font-semibold text-neutral-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
-                >
-                  {{ item.name }}
-                </h3>
-              </div>
-            </div>
-          </UCard>
-        </div>
+          />
+        </BaseGrid>
       </div>
     </div>
 
@@ -189,5 +198,5 @@ const sections = [
         </div>
       </div>
     </div>
-  </BasePageWrapper>
+  </PageWrapper>
 </template>

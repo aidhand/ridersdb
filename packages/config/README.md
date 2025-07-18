@@ -224,7 +224,7 @@ export default [
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*"],
+
   "exclude": ["dist", "node_modules"]
 }
 ```

@@ -7,18 +7,6 @@ export default defineConfig({
     // Global test configuration
     globals: true,
     // Reporters for different environments
-    reporters: process.env.CI ? ["default", "junit"] : ["default"],
-    // Coverage configuration
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html"],
-      exclude: [
-        "node_modules",
-        "dist",
-        "**/*.config.*",
-        "**/*.d.ts",
-        "**/coverage/**",
-      ],
-    },
+    reporters: ["default"],
   },
 });

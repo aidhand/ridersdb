@@ -1,4 +1,4 @@
-import { baseConfig } from "./base.js";
+import { baseConfig } from "./base";
 import type { TSESLint } from "@typescript-eslint/utils";
 
 /**

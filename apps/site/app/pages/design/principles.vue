@@ -223,16 +223,36 @@ const successMetrics = [
     ],
   },
 ];
+
+// Navigation items
+const navigationItems = [
+  { label: "Variants", hash: "#variants", icon: "i-tabler-palette" },
+  { label: "Colors", hash: "#colors", icon: "i-tabler-color-swatch" },
+  { label: "Sizes", hash: "#sizes", icon: "i-tabler-dimensions" },
+  { label: "States", hash: "#states", icon: "i-tabler-toggle-left" },
+  { label: "Icons", hash: "#icons", icon: "i-tabler-icons" },
+  { label: "Usage", hash: "#usage", icon: "i-tabler-list-check" },
+  {
+    label: "Accessibility",
+    hash: "#accessibility",
+    icon: "i-tabler-accessible",
+  },
+];
 </script>
 
 <template>
-  <BasePageWrapper>
+  <PageWrapper>
     <!-- Header -->
-    <LayoutHeaderNav
+    <PageHeader
+      title="Design Principles"
+      description="These principles guide every design decision in our system, ensuring
+          we create experiences that are meaningful, accessible, and delightful
+          for motorcycle enthusiasts."
       :breadcrumbs="[
         { label: 'Design System', to: '/design', icon: 'i-tabler-palette' },
         { label: 'Principles' },
       ]"
+      :navigation-items="navigationItems"
     />
 
     <div class="space-y-12">
@@ -551,13 +571,16 @@ const successMetrics = [
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <UCard class="border border-neutral-200 dark:border-neutral-800">
-            <template #header>
-              <h3 class="font-semibold text-neutral-900 dark:text-white">
-                Accessibility Standards
-              </h3>
-            </template>
+        <BaseGrid
+          :cols="{ default: 1, md: 2 }"
+          class="gap-6"
+        >
+          <FeatureCard
+            title="Accessibility Standards"
+            icon="i-tabler-accessible"
+            icon-color="purple"
+            class="border border-neutral-200 dark:border-neutral-800"
+          >
             <ul class="space-y-2 text-sm">
               <li class="flex items-center gap-2">
                 <UIcon
@@ -596,14 +619,14 @@ const successMetrics = [
                 </a>
               </li>
             </ul>
-          </UCard>
+          </FeatureCard>
 
-          <UCard class="border border-neutral-200 dark:border-neutral-800">
-            <template #header>
-              <h3 class="font-semibold text-neutral-900 dark:text-white">
-                Design Philosophy
-              </h3>
-            </template>
+          <FeatureCard
+            title="Design Philosophy"
+            icon="i-tabler-palette"
+            icon-color="blue"
+            class="border border-neutral-200 dark:border-neutral-800"
+          >
             <ul class="space-y-2 text-sm">
               <li class="flex items-center gap-2">
                 <UIcon
@@ -642,8 +665,8 @@ const successMetrics = [
                 </a>
               </li>
             </ul>
-          </UCard>
-        </div>
+          </FeatureCard>
+        </BaseGrid>
       </section>
 
       <!-- Call to Action -->
@@ -681,5 +704,5 @@ const successMetrics = [
         </div>
       </section>
     </div>
-  </BasePageWrapper>
+  </PageWrapper>
 </template>

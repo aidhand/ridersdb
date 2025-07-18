@@ -1,14 +1,10 @@
 // Database connections
-export { db, httpDb, wsDb, bunDb } from "~/utils/drizzle.js";
+export { db, httpDb, wsDb } from "~/utils/drizzle";
 
-// Data generators (simplified factories + seeders)
-export * from "~/generators.js";
+// Data generators
+export * from "~/generate";
 
 // Database schemas
-export * from "~/schema.js";
+export * from "~/schema";
 
-// Seed utility functions
-export * from "~/seed.js";
-
-export * from "~/types";
 export * from "~/utils";

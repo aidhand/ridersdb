@@ -1,5 +1,5 @@
 // Re-export shared types for convenience
-export * from "@repo/shared-types";
+export * from "@repo/shared/types";
 
 // Local template-specific types
 export interface TemplateConfig {

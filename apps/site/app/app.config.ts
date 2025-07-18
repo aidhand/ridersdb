@@ -5,9 +5,12 @@ export default defineAppConfig({
   },
 
   ui: {
+    // Extend existing colors with your brand colors
     colors: {
       primary: "sky",
+      secondary: "slate",
       neutral: "zinc",
+
       // OAuth Provider Brand Colors
       discord: "discord",
       microsoft: "microsoft",
@@ -15,16 +18,6 @@ export default defineAppConfig({
       spotify: "spotify",
       facebook: "facebook",
       twitter: "twitter",
-    },
-
-    button: {
-      slots: {
-        base: "cursor-pointer inline-flex items-center gap-2",
-      },
-
-      defaultVariants: {
-        size: "lg",
-      },
     },
 
     input: {

@@ -1,98 +1,60 @@
 import { faker } from "@faker-js/faker";
-import type { RetailerInsert } from "../schema.js";
-import { generateTimestampSlug, runInTransaction } from "@repo/shared-utils";
-import { logProgress, logSuccess } from "../utils/generator-utils.js";
-import type {
-  AnyDatabase,
-  GeneratorOptions,
-} from "@repo/shared-types/generators";
-
-// Track used slugs to avoid duplicates
-const usedSlugs = new Set<string>();
+import type { RetailerInsert } from "../schema";
+import { generateSlug } from "@repo/shared";
 
 /**
- * Predefined retailer types for variety
+ * Generates a single retailer without slug tracking
  */
-const RETAILER_TYPES = [
-  "Online Store",
-  "Motorcycle Dealership",
-  "Gear Specialist",
-  "Department Store",
-  "Discount Retailer",
-];
-
-/**
- * Generates a single retailer
- */
-function generateRetailerData(): RetailerInsert {
+export async function generateRetailer(): Promise<RetailerInsert> {
   const name = faker.company.name();
-  const slug = generateTimestampSlug(name);
-  usedSlugs.add(slug);
+  const slug = generateSlug(`${name}-${Date.now()}`);
 
   return {
     slug,
     name,
-    description: `${faker.helpers.arrayElement(RETAILER_TYPES)} specializing in motorcycle gear and accessories`,
     domain: faker.internet.domainName(),
   };
 }
 
 /**
- * Creates retailers - handles both data generation and database seeding
+ * Generates multiple retailers (may have duplicate slugs)
  */
-export async function createRetailers(
-  options: GeneratorOptions = {}
-): Promise<RetailerInsert[]> {
-  const { count = 1, db, transaction, returnData = !db } = options;
-
-  // Generate the data
-  const retailers: RetailerInsert[] = [];
-  for (let i = 0; i < count; i++) {
-    retailers.push(generateRetailerData());
-  }
-
-  // If only generating data, return it
-  if (returnData) {
-    return retailers;
-  }
-
-  // Otherwise, seed the database
-  if (!db) {
-    throw new Error("Database instance is required for seeding");
-  }
-
-  logProgress(`Creating ${count} retailers...`);
-
-  const result = await runInTransaction(
-    db,
-    async (tx) => {
-      // Import table schema only when needed to avoid circular dependency
-      const { retailers: retailersTable } = require("@repo/data");
-
-      // Insert all retailers at once for better performance
-      await tx.insert(retailersTable).values(retailers);
-
-      return retailers;
-    },
-    transaction
-  );
-
-  logSuccess(`Created ${count} retailers`);
-  return result;
+export async function generateRetailers(count = 8): Promise<RetailerInsert[]> {
+  const promises = Array.from({ length: count }, () => generateRetailer());
+  return Promise.all(promises);
 }
 
 /**
- * Seeds retailers
+ * Generates multiple retailers with guaranteed unique slugs
  */
-export async function seedRetailers(
-  db: AnyDatabase,
-  options: { count?: number; transaction?: any } = {}
-): Promise<void> {
-  const count = options.count || 6;
+export async function generateUniqueRetailers(
+  count = 8
+): Promise<RetailerInsert[]> {
+  // Track used slugs to avoid duplicates within this generation session
+  const usedSlugs = new Set<string>();
+  const retailers: RetailerInsert[] = [];
+  let totalAttempts = 0;
+  const maxAttempts = 1000; // Prevent infinite loops
 
-  await createRetailers({
-    count,
-    db,
-    transaction: options.transaction,
-  });
+  while (retailers.length < count && totalAttempts < maxAttempts) {
+    // Generate a batch in parallel (generate extra to account for potential duplicates)
+    const batchSize = Math.min(10, (count - retailers.length) * 2);
+    const batchPromises = Array.from({ length: batchSize }, () =>
+      generateRetailer()
+    );
+    const batchRetailers = await Promise.all(batchPromises);
+
+    totalAttempts += batchSize;
+
+    // Filter for unique slugs
+    for (const retailer of batchRetailers) {
+      if (!usedSlugs.has(retailer.slug) && retailers.length < count) {
+        usedSlugs.add(retailer.slug);
+        retailers.push(retailer);
+      }
+    }
+    // Otherwise throw away the non-unique result and retry
+  }
+
+  return retailers;
 }

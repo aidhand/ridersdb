@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { usePreferences } from "~/composables/usePreferences";
+import {
+  usePreferences,
+  usePreferredCurrency,
+} from "~/composables/usePreferences";
 
 // Meta tags for SEO
 useSeoMeta({
-  title: "Products - RidersDB",
+  title: "Products",
   description: "Browse and discover motorcycle gear, accessories, and parts.",
 });
 
@@ -187,20 +190,8 @@ const clearFilters = () => {
   currentPage.value = 1;
 };
 
-// Toggle view mode
-const toggleViewMode = () => {
-  preferences.setViewMode(
-    preferences.state.value.view === "grid" ? "list" : "grid"
-  );
-};
-
-// Format price with user's preferred currency
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: preferences.state.value.currency,
-  }).format(price);
-};
+// Use the toggle and format functions from usePreferences
+const { toggleViewMode } = preferences;
 </script>
 
 <template>
@@ -224,7 +215,7 @@ const formatPrice = (price: number) => {
           <div class="flex items-center gap-3">
             <UButton
               :icon="
-                preferences.state.value.view === 'grid' ?
+                preferences.state.value.viewMode === 'grid' ?
                   'i-tabler-list'
                 : 'i-tabler-grid-3x3'
               "
@@ -232,7 +223,7 @@ const formatPrice = (price: number) => {
               color="neutral"
               size="sm"
               :label="
-                preferences.state.value.view === 'grid' ?
+                preferences.state.value.viewMode === 'grid' ?
                   'List View'
                 : 'Grid View'
               "
@@ -324,8 +315,10 @@ const formatPrice = (price: number) => {
                     color="primary"
                   />
                   <div class="flex justify-between text-xs text-neutral-500">
-                    <span>{{ formatPrice(priceRange[0] || 0) }}</span>
-                    <span>{{ formatPrice(priceRange[1] || 5000) }}</span>
+                    <span>{{ usePreferredCurrency(priceRange[0] || 0) }}</span>
+                    <span>{{
+                      usePreferredCurrency(priceRange[1] || 5000)
+                    }}</span>
                   </div>
                 </div>
               </div>
@@ -344,7 +337,7 @@ const formatPrice = (price: number) => {
 
           <!-- Products Grid -->
           <div
-            v-if="preferences.state.value.view === 'grid'"
+            v-if="preferences.state.value.viewMode === 'grid'"
             class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
           >
             <UCard
@@ -423,7 +416,7 @@ const formatPrice = (price: number) => {
                   <span
                     class="text-lg font-bold text-neutral-900 dark:text-white"
                   >
-                    {{ formatPrice(product.price) }}
+                    {{ usePreferredCurrency(product.price) }}
                   </span>
                   <UButton
                     icon="i-tabler-heart"
@@ -529,7 +522,7 @@ const formatPrice = (price: number) => {
                       <div
                         class="text-lg font-bold text-neutral-900 dark:text-white"
                       >
-                        {{ formatPrice(product.price) }}
+                        {{ usePreferredCurrency(product.price) }}
                       </div>
                       <div class="flex gap-2">
                         <UButton

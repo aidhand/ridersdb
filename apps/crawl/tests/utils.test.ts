@@ -4,7 +4,7 @@ import {
   removeAllUrlParams,
   removeSpecificUrlParams,
   removeUrlParamsExcept,
-} from "../src/utils.js";
+} from "../src/utils";
 
 describe("URL Utils", () => {
   const testUrl = "https://example.com/path?param1=value1&param2=value2&page=3";

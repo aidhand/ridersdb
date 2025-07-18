@@ -100,7 +100,7 @@ html {
 
 body {
   @apply text-black bg-white;
-  @apply dark:text-white dark:bg-black;
+  @apply dark:text-white dark:bg-neutral-950;
 }
 
 h1,

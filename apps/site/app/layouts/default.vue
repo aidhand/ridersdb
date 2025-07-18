@@ -1,16 +1,14 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-white dark:bg-neutral-950">
+  <div class="min-h-screen flex flex-col">
     <!-- Header -->
     <SiteHeader />
 
     <!-- Main Content -->
     <main
-      class="flex flex-col flex-1 bg-neutral-400/4"
+      class="pb-12 flex flex-col flex-1 bg-neutral-400/2"
       aria-label="Main content"
     >
-      <BaseContainer class="flex flex-col flex-1">
-        <slot />
-      </BaseContainer>
+      <slot />
     </main>
 
     <!-- Footer -->

@@ -5,22 +5,16 @@
   "private": true,
   "scripts": {
     "crawl": "bun run src/main.ts",
-    "build": "tsc",
-    "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui",
     "lint": "eslint . --fix",
-    "lint:check": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rimraf -g {dist,coverage,coverage.json,.*cache,*.tsbuildinfo,**.log,**.map}"
   },
   "dependencies": {
     "@repo/data": "workspace:*",
-    "@repo/shared-utils": "workspace:*",
-    "@repo/shared-types": "workspace:*",
+    "@repo/shared": "workspace:*",
     "crawlee": "^3.0.0",
     "cheerio": "*",
     "playwright": "*",
@@ -34,8 +28,10 @@
     "eslint": "^9.27.0",
     "prettier": "^3.5.3",
     "tsx": "^4.4.0",
-    "typescript": "~5.8.0",
-    "@types/node": "^22.0.0",
-    "vitest": "^3.2.4"
+    "typescript": "^5.8.3",
+    "@types/bun": "^1.2.17",
+    "@types/node": "^24.0.10",
+    "vitest": "^3.2.4",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

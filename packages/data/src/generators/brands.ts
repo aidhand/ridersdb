@@ -1,41 +1,15 @@
 import { faker } from "@faker-js/faker";
-import type { BrandInsert } from "../schema.js";
-import { generateTimestampSlug, runInTransaction } from "@repo/shared-utils";
-import { logProgress, logSuccess } from "../utils/generator-utils.js";
-import type {
-  AnyDatabase,
-  GeneratorOptions,
-} from "@repo/shared-types/generators";
-
-// Track used slugs to avoid duplicates
-const usedSlugs = new Set<string>();
+import type { BrandInsert } from "../schema";
+import { generateSlug } from "@repo/shared";
 
 /**
- * Configuration for different brand states
+ * Generates a single brand without slug tracking
  */
-const BRAND_STATES = {
-  premium: (attributes: Partial<BrandInsert>): Partial<BrandInsert> => ({
-    ...attributes,
-    logo_url: faker.image.avatar(),
-    website_url: faker.internet.url(),
-    description: `Premium ${faker.commerce.productAdjective()} ${faker.commerce.productMaterial()} products`,
-  }),
-  basic: (attributes: Partial<BrandInsert>): Partial<BrandInsert> => ({
-    ...attributes,
-    logo_url: null,
-    website_url: null,
-  }),
-};
-
-/**
- * Generates a single brand with optional state
- */
-function generateBrandData(state?: keyof typeof BRAND_STATES): BrandInsert {
+export async function generateBrand(): Promise<BrandInsert> {
   const name = faker.company.name();
-  const slug = generateTimestampSlug(name);
-  usedSlugs.add(slug);
+  const slug = generateSlug(name);
 
-  let attributes: Partial<BrandInsert> = {
+  const attributes: Partial<BrandInsert> = {
     slug,
     name,
     description: faker.company.catchPhrase(),
@@ -43,94 +17,46 @@ function generateBrandData(state?: keyof typeof BRAND_STATES): BrandInsert {
     website_url: faker.datatype.boolean() ? faker.internet.url() : null,
   };
 
-  // Apply state if specified
-  if (state && BRAND_STATES[state]) {
-    attributes = BRAND_STATES[state](attributes);
-  }
-
   return attributes as BrandInsert;
 }
 
 /**
- * Creates brands - handles both data generation and database seeding
+ * Generates multiple brands (may have duplicate slugs)
  */
-export async function createBrands(
-  options: GeneratorOptions & {
-    state?: "premium" | "basic";
-  } = {}
-): Promise<BrandInsert[]> {
-  const { count = 1, state, db, transaction, returnData = !db } = options;
-
-  // Generate the data
-  const brands: BrandInsert[] = [];
-  for (let i = 0; i < count; i++) {
-    brands.push(generateBrandData(state));
-  }
-
-  // If only generating data, return it
-  if (returnData) {
-    return brands;
-  }
-
-  // Otherwise, seed the database
-  if (!db) {
-    throw new Error("Database instance is required for seeding");
-  }
-
-  logProgress(`Creating ${count} brands${state ? ` (${state})` : ""}...`);
-
-  const result = await runInTransaction(
-    db,
-    async (tx) => {
-      // Import table schema only when needed to avoid circular dependency
-      const { brands: brandsTable } = require("@repo/data");
-
-      // Insert all brands at once for better performance
-      await tx.insert(brandsTable).values(brands);
-
-      return brands;
-    },
-    transaction
-  );
-
-  logSuccess(`Created ${count} brands`);
-  return result;
+export async function generateBrands(count = 8): Promise<BrandInsert[]> {
+  const promises = Array.from({ length: count }, () => generateBrand());
+  return Promise.all(promises);
 }
 
 /**
- * Seeds brands with a mix of premium and basic types
+ * Generates multiple brands with guaranteed unique slugs
  */
-export async function seedBrands(
-  db: AnyDatabase,
-  options: { count?: number; transaction?: any } = {}
-): Promise<void> {
-  const count = options.count || 12;
-  const premiumCount = Math.floor(count * 0.3);
-  const basicCount = count - premiumCount;
+export async function generateUniqueBrands(count = 8): Promise<BrandInsert[]> {
+  // Track used slugs to avoid duplicates within this generation session
+  const usedSlugs = new Set<string>();
+  const brands: BrandInsert[] = [];
+  let totalAttempts = 0;
+  const maxAttempts = 1000; // Prevent infinite loops
 
-  await runInTransaction(
-    db,
-    async (tx) => {
-      // Create premium brands
-      if (premiumCount > 0) {
-        await createBrands({
-          count: premiumCount,
-          state: "premium",
-          db,
-          transaction: tx,
-        });
-      }
+  while (brands.length < count && totalAttempts < maxAttempts) {
+    // Generate a batch in parallel (generate extra to account for potential duplicates)
+    const batchSize = Math.min(10, (count - brands.length) * 2);
+    const batchPromises = Array.from({ length: batchSize }, () =>
+      generateBrand()
+    );
+    const batchBrands = await Promise.all(batchPromises);
 
-      // Create basic brands
-      if (basicCount > 0) {
-        await createBrands({
-          count: basicCount,
-          state: "basic",
-          db,
-          transaction: tx,
-        });
+    totalAttempts += batchSize;
+
+    // Filter for unique slugs
+    for (const brand of batchBrands) {
+      if (!usedSlugs.has(brand.slug) && brands.length < count) {
+        usedSlugs.add(brand.slug);
+        brands.push(brand);
       }
-    },
-    options.transaction
-  );
+    }
+    // Otherwise throw away the non-unique results and retry
+  }
+
+  return brands;
 }
