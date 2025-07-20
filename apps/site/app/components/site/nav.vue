@@ -2,6 +2,8 @@
 const navigationItems = [
   { label: "Home", href: "/" },
   { label: "Products", href: "/products" },
+  { label: "Design", href: "/design" },
+  { label: "Dashboard", href: "/user/dashboard" },
 ];
 </script>
 
@@ -22,9 +24,9 @@ const navigationItems = [
     </nav>
 
     <!-- Secondary Actions -->
-    <div class="flex items-center gap-2">
+    <!-- <div class="flex items-center gap-2">
       <BaseThemeToggle />
       <UserDropdown />
-    </div>
+    </div> -->
   </div>
 </template>

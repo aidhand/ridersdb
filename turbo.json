@@ -1,31 +1,74 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+
   "ui": "tui",
+
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".nuxt/**", "!.nuxt/cache/**"]
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "src/**", "tsconfig.json"],
+      "outputs": [".nuxt/**", "!.nuxt/cache/**", "dist/**", ".tsbuildinfo"]
     },
+
     "start": {
       "dependsOn": ["build"],
-      "persistent": true
+      "persistent": true,
+      "env": ["NUXT_DATABASE_URL"]
     },
-    "prepare": {
-      "dependsOn": ["^prepare"]
-    },
+
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["NUXT_DATABASE_URL"]
     },
+
+    "clean": {},
+
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "**/*.{js,ts,vue,json}",
+        "eslint.config.*",
+        "tsconfig.json"
+      ]
     },
-    "test": {
-      "dependsOn": ["^test"]
+
+    "format": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "**/*.{js,ts,vue,json,md}",
+        ".prettierrc*",
+        "prettier.config.*"
+      ]
     },
+
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "**/*.{ts,vue}",
+        "tsconfig.json",
+        "**/*.d.ts"
+      ]
+    },
+
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "tests/**",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "vitest.config.*",
+        "tsconfig.json"
+      ],
+      "outputs": ["coverage/**"]
     }
   }
 }

@@ -3,36 +3,12 @@ import { defineNuxtConfig } from "nuxt/config";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
+  future: { compatibilityVersion: 4 },
   devtools: { enabled: true },
-  typescript: { typeCheck: true },
+  // typescript: { typeCheck: true },
   eslint: { checker: true },
 
-  future: {
-    compatibilityVersion: 4,
-  },
-
-  nitro: {
-    preset: "bun",
-
-    experimental: {
-      tasks: true,
-      openAPI: true,
-    },
-  },
-
-  imports: {
-    dirs: ["stores"],
-  },
-
-  modules: [
-    "@nuxt/eslint",
-    "@nuxt/fonts",
-    "@nuxt/icon",
-    "@nuxt/image",
-    "@nuxt/ui",
-    "@nuxt/test-utils/module",
-    "nuxt-auth-utils",
-  ],
+  css: ["~/assets/css/main.css"],
 
   fonts: {
     defaults: {
@@ -41,20 +17,11 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ["~/assets/css/main.css"],
+  build: {
+    transpile: ["trpc-nuxt"],
+  },
 
   runtimeConfig: {
-    session: {
-      password: "",
-    },
-
-    oauth: {
-      github: {
-        clientId: "",
-        clientSecret: "",
-      },
-    },
-
     database: {
       url: "",
     },
@@ -68,5 +35,51 @@ export default defineNuxtConfig({
     },
 
     public: {},
+  },
+
+  experimental: {
+    asyncContext: true,
+    asyncEntry: true,
+    typedPages: true,
+  },
+
+  nitro: {
+    preset: "bun",
+
+    experimental: {
+      tasks: true,
+      openAPI: true,
+    },
+  },
+
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@nuxt/icon",
+    "@nuxt/image",
+    "@nuxt/ui",
+    "@nuxt/test-utils/module",
+    "magic-regexp/nuxt",
+  ],
+
+  ui: {
+    theme: {
+      colors: [
+        "primary",
+        "secondary",
+        "success",
+        "info",
+        "warning",
+        "error",
+        "neutral",
+        // OAuth Provider Brand Colors
+        "discord",
+        "microsoft",
+        "google",
+        "spotify",
+        "facebook",
+        "twitter",
+      ],
+    },
   },
 });

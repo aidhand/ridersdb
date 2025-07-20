@@ -1,32 +1,37 @@
-<script setup lang="ts">
-interface Props {
-  /** Number of columns for different breakpoints */
-  cols?: string;
-  /** Gap between grid items */
-  gap?: "2" | "4" | "6" | "8" | "12";
-  /** Grid container class overrides */
-  class?: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  cols: "1 md:2 lg:3",
-  gap: "6",
-  class: "",
-});
-
-const gridClasses = computed(() => [
-  "grid",
-  `grid-cols-${props.cols}`,
-  `gap-${props.gap}`,
-  props.class,
-]);
-</script>
-
 <template>
-  <div
-    :class="gridClasses"
-    role="list"
-  >
+  <div :class="gridClasses">
     <slot />
   </div>
 </template>
+
+<script setup lang="ts">
+import {
+  createGridBase,
+  createGridColumns,
+  createGapClasses,
+  type ResponsiveColumns,
+} from "~/utils/layoutUtils";
+import { clsx } from "clsx";
+
+interface GridProps {
+  cols: number | ResponsiveColumns;
+
+  spacing?: number | string;
+  class?: string;
+}
+
+const props = withDefaults(defineProps<GridProps>(), {
+  spacing: 6, // Default spacing
+  class: "",
+});
+
+// Use the new modular functions to build classes
+const gridClasses = computed(() => {
+  return clsx(
+    ...createGridBase(),
+    ...createGridColumns(props.cols),
+    ...createGapClasses(props.spacing),
+    props.class
+  );
+});
+</script>

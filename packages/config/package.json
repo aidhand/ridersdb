@@ -1,29 +1,92 @@
 {
+  "$schema": "https://json.schemastore.org/package",
   "name": "@repo/config",
+  "description": "Unified configuration package for monorepo",
+  "version": "0.0.1",
+  "type": "module",
   "private": true,
-  "version": "1.0.0",
-  "description": "Shared ESLint and TypeScript config for RidersDB monorepo",
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "biome": "biome check .",
-    "oxlint": "oxlint .",
-    "lint": "eslint . --fix"
-  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    "./eslint.config.mjs": "./eslint.config.mjs",
-    "./tsconfig.base.json": "./tsconfig.base.json"
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./eslint/base": {
+      "import": "./src/eslint/base.ts",
+      "types": "./src/eslint/base.ts"
+    },
+    "./eslint/typescript": {
+      "import": "./src/eslint/typescript.ts",
+      "types": "./src/eslint/typescript.ts"
+    },
+    "./eslint/node": {
+      "import": "./src/eslint/node.ts",
+      "types": "./src/eslint/node.ts"
+    },
+    "./eslint/vue": {
+      "import": "./src/eslint/vue.ts",
+      "types": "./src/eslint/vue.ts"
+    },
+    "./typescript/base": "./src/typescript/base.json",
+    "./typescript/app": "./src/typescript/app.json",
+    "./typescript/library": "./src/typescript/library.json",
+    "./prettier/base": {
+      "import": "./src/prettier/base.ts",
+      "types": "./src/prettier/base.ts"
+    },
+    "./oxlint/base": {
+      "import": "./src/oxlint/base.ts",
+      "types": "./src/oxlint/base.ts"
+    },
+    "./vitest/base": {
+      "import": "./src/vitest/base.ts",
+      "types": "./src/vitest/base.ts"
+    },
+    "./vitest/ui": {
+      "import": "./src/vitest/ui.ts",
+      "types": "./src/vitest/ui.ts"
+    }
   },
-  "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@typescript-eslint/parser": "^8.32.1",
-    "eslint": "^9.27.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-config-turbo": "^2.5.3"
+  "files": [
+    "./src/**/*",
+    "./src/typescript/"
+  ],
+  "scripts": {
+    "lint": "eslint . --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rimraf -g {**/dist,**/coverage,**/coverage.tson,.*cache,*.tsbuildinfo,**.log,**.map}"
   },
   "peerDependencies": {
-    "eslint": "^9",
-    "typescript": "^5"
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0",
+    "prettier": "^3.0.0",
+    "oxlint": "^0.10.0"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.16.0",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "@typescript-eslint/utils": "^8.19.1",
+    "eslint-plugin-vue": "^9.32.0",
+    "eslint-plugin-nuxt": "^4.0.0",
+    "typescript-eslint": "^8.19.1",
+    "@total-typescript/tsconfig": "^1.0.4",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "jsdom": "^26.0.0",
+    "vitest": "^3.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^9.27.0",
+    "typescript": "^5.8.3",
+    "prettier": "^3.5.3",
+    "oxlint": "^0.10.3",
+    "@types/node": "^24.0.10",
+    "@types/bun": "^1.2.17",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

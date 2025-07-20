@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@repo/shared",
+  "description": "Shared TypeScript types and utilities for the RidersDB monorepo",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./types": {
+      "import": "./src/types/index.ts",
+      "types": "./src/types/index.ts"
+    },
+    "./types/api": {
+      "import": "./src/types/api.ts",
+      "types": "./src/types/api.ts"
+    },
+    "./types/auth": {
+      "import": "./src/types/auth.ts",
+      "types": "./src/types/auth.ts"
+    },
+    "./types/common": {
+      "import": "./src/types/common.ts",
+      "types": "./src/types/common.ts"
+    },
+    "./types/config": {
+      "import": "./src/types/config.ts",
+      "types": "./src/types/config.ts"
+    },
+    "./types/database": {
+      "import": "./src/types/database.ts",
+      "types": "./src/types/database.ts"
+    },
+    "./types/generators": {
+      "import": "./src/types/generators.ts",
+      "types": "./src/types/generators.ts"
+    },
+    "./utils": {
+      "import": "./src/utils/index.ts",
+      "types": "./src/utils/index.ts"
+    },
+    "./utils/database": {
+      "import": "./src/utils/database.ts",
+      "types": "./src/utils/database.ts"
+    },
+    "./utils/errors": {
+      "import": "./src/utils/errors.ts",
+      "types": "./src/utils/errors.ts"
+    },
+    "./utils/helpers": {
+      "import": "./src/utils/helpers.ts",
+      "types": "./src/utils/helpers.ts"
+    },
+    "./utils/logging": {
+      "import": "./src/utils/logging.ts",
+      "types": "./src/utils/logging.ts"
+    },
+    "./utils/parse": {
+      "import": "./src/utils/parse.ts",
+      "types": "./src/utils/parse.ts"
+    },
+    "./utils/slug": {
+      "import": "./src/utils/slug.ts",
+      "types": "./src/utils/slug.ts"
+    },
+    "./utils/types": {
+      "import": "./src/utils/types.ts",
+      "types": "./src/utils/types.ts"
+    },
+    "./utils/validation": {
+      "import": "./src/utils/validation.ts",
+      "types": "./src/utils/validation.ts"
+    },
+    "./slug": {
+      "import": "./src/utils/slug.ts",
+      "types": "./src/utils/slug.ts"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf -g {dist,coverage,coverage.json,.*cache,*.tsbuildinfo,**.log,**.map}",
+    "lint": "eslint . --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "*"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^9.27.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "@types/node": "^24.0.10",
+    "@types/bun": "^1.2.17",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "dependencies": {
+    "slugify": "^1.6.6"
+  }
+}
